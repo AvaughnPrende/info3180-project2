@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="outer-containment-box">
+    <div class="post-containment">
+        <div class="username">
+            <!--Username-->
+            {{user.username}}
+        </div>
+        <div class="userpost">
+            <!--Image that the user will post-->
+            <img class="img-responsive" src=" {{url_for('static', filename= 'images/' + user.image)}}" height="250" width="250" alt = "image upload" >
+        </div>
+        <div class="button-containment">
+            <!--Buttons Funtionalities and design to be added later-->
+            <div class="like-button">
+                <button>Like</button>
+            </div>
+            <div class="comment-button">
+                <button>Comment</button>
+            </div>
+        </div>
+        <div class="caption-containment">
+            <!--General Description of the Photo by the user... To be collected via the form.-->
+            {{data['caption']}}
+        </div>
+    </div>
+</div>
+{% endblock %}

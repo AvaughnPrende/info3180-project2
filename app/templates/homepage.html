@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="containment-box">
+    <div class="logo">
+        <div>
+            <!--App LOGO-->
+            <img class="img-responsive" src=" {{url_for('static', filename='resources/pgramlogo.png')}}" height="30" width="30" alt = "logo" >
+        </div>
+        <div>
+            <!--App Name-->
+            <h2>PhotoGram</h2>
+        </div>
+    </div>
+    <div>
+        <!--App Tagline/Catch Phrase-->
+        <p>Let the World See the Best You.</p>
+    </div>
+</div>
+{% endblock %}

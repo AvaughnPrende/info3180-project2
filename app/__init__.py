@@ -4,8 +4,8 @@ from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = ""
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://dbUser:password@localhost/dbName"
+app.config['SECRET_KEY'] = "8Mfj4PXls5kRglU"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://bestgroup:p@$$word@localhost/photogram"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True # added just to suppress a warning
 
 db = SQLAlchemy(app)
