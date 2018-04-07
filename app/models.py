@@ -4,7 +4,6 @@ class Post(db.Model):
     """This is the schema to be used to create the 'posts' table for the 
         photogram database
     """
-    
     __tablename__ = 'posts'
     
     id         = db.Column(db.Integer,primary_key = True)
@@ -33,7 +32,7 @@ class User(db.Model):
     id            = db.Column(db.Integer,primary_key = True)
     username      = db.Column(db.String(255))
     password      = db.Column(db.Text)
-    firstname     = db.Column(db.string(255))
+    firstname     = db.Column(db.String(255))
     lastname      = db.Column(db.String(255))
     email         = db.Column(db.String(255))
     location      = db.Column(db.String(255))
@@ -75,21 +74,23 @@ class Like(db.Model):
     
     def __repr__(self):
         return '<Like User: {0} - Post: {1}>'.format(self.userid,self.postid)
+        
 
+class Follow(db.Model):
+    """This is the schema to be used to create the 'follows' table for the 
+        photogram database
+    """
+    __tablename__ = 'follows'
     
+    id = db.Column(db.Integer,primary_key = True)
+    userid      =db.Column(db.Integer)
+    follower_id = db.Column(db.Integer)
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    def __init__(self,userid,follower_id):
+        """This is the constructor for the Follow class"""
+        self.userid      = userid
+        self.follower_id = follower_id
+        
+    def __repr__(self):
+        return '<Follow User: {0} - Followed by: {1}>'.format(self.userid,self.folloer_id)
+
