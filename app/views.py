@@ -16,6 +16,7 @@ from app.models import User,Post, Follow, Like
 from werkzeug.security import generate_password_hash, check_password_hash
 from auxiliary_functions import current_date
 import jwt
+from functools import wraps
 
 ###
 # Routing for your application.
@@ -86,19 +87,47 @@ def login():
         return jsonify_form_errors(form_errors(loginForm))
 
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    flash("You are now logged out","danger")
-    """Render the website's about page."""
-    return redirect(url_for("index"))
+def jwt_token_required(fn):
+    """A decorator functions that secures endpoints that require
+    the user to be logged in"""
+    @wraps(fn)
+    def decorated(*args,**kwargs):
+        jwt_token = request.headers.get('Authorization')
+        if jwt_token == None:
+            return jsonify({'error':'ACCESS DENIED: No token provided'})
+        else:
+            try:
+                user_data    = jwt.decode(jwt_token,app.config['SECRET_KEY'])
+                current_user = User.query.filter_by(username = user_data['user']).first()
+            except jwt.exceptions.InvalidSignatureError:
+                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
+            return fn(current_user,*args,**kwargs)
+    return decorated
 
-@app.route('/explore')
-@login_required
-def explore():
-    users = User.query.all()
-    return render_template('explore.html', users=users)
+
+#log in required
+@app.route('/logout',methods = ['GET'])
+@jwt_token_required
+def logout(current_user):
+    """Logs out a currently logged in user"""
+    if request.method == 'GET':
+        return jsonify({'message':current_user.username +  ' successfully logged out'})
+
+
+# @app.route('/logout')
+# @login_required
+# def logout():
+#     logout_user()
+#     flash("You are now logged out","danger")
+#     """Render the website's about page."""
+#     return redirect(url_for("index"))
+
+
+# @app.route('/explore')
+# @login_required
+# def explore():
+#     users = User.query.all()
+#     return render_template('explore.html', users=users)
 
 @app.route('/users/{user_id}')
 def userProfile(user_id):
@@ -106,9 +135,9 @@ def userProfile(user_id):
     user = User.query.get(user_id)
     post = Post.query.get(user_id)
     
-    posts = Post.query.filter_by(user_id=User.user_id)
-    count_post = posts.count()
-    follows = Follow.query.filter_by(user_id = Follow.user_id)
+    posts         = Post.query.filter_by(user_id=User.user_id)
+    count_post    = posts.count()
+    follows       = Follow.query.filter_by(user_id = Follow.user_id)
     count_follows = follows.count()
     
     return render_template('userProfile.html', user=user, count_post = count_post, count_follows = count_follows, post = post)
@@ -117,16 +146,6 @@ def userProfile(user_id):
 def post():
     """Render the website's about page."""
     return render_template('post.html')
-    
-@app.route('/api/users/register',methods = ['POST'])
-def register_user():
-    """Accepts post request with user data and registers
-    user"""
-    d = {}
-    for item in request.values:
-        d[item] = request.values.get(item)
-    response = {'message': 'Message recieved'}
-    return jsonify(d)
 
 ###
 # The functions below should be applicable to all Flask apps.
