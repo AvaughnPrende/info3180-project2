@@ -51,6 +51,12 @@ class User(db.Model):
         self.biography     = biography
         self.profile_photo = profile_photo
         self.joined_on     = joined_on
+    
+    def get_id(self):
+        try:
+            return unicode(self.id)  # python 2 support
+        except NameError:
+            return str(self.id)  # python 3 support
         
     def __repr__(self):
         return '<User {0}: {1} {2}>'.format(self.username,self.firstname,self.lastname)

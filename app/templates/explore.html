@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div id = "user-profile">
+    <div id = "left-page">
+        {% for user in users %}
+            
+            <div id = "user-top">
+                <form action="{{ url_for('users', user_id=user.id) }}">
+                    <button type="button" class="btn btn-link">{{ user.username</button>
+                </form>
+            </div>
+            
+            <div id = "user-body">
+                <img src=""{{url_for('static', filename = "images/"+ user.profile_photo) }}""></img>
+                <p id = "bio" ></p>
+            </div>
+            
+            <div id = "user-footer">
+                <!--likes-->
+                <p id = "date">{{ user.joined_on }}</p>
+            </div>
+         
+        {% endfor %}
+    </div>
+    <div id = "right-page">
+        <form action="{{ url_for('posts/new') }}">
+            <button type="button" class="btn btn-primary">New Post</button>
+        </form>
+    </div>
+        
+</div>
+
+{% endblock %}

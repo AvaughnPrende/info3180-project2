@@ -6,7 +6,7 @@
     <div class="form-group">
       <h2>Sign Up For PhotoGram</h2>
     </div>
-    <form action="{{ url_for('signup') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ url_for('register') }}" method="post" enctype="multipart/form-data">
       {{ form.csrf_token }}
       
       <div class="form-group">
@@ -40,6 +40,16 @@
       </div>
       
       <div class="form-group">
+        {{ form.password.label }}
+        <!---Error Message-->
+        {% for message in form.name.errors %}
+        <div style="color:red; font-size:15px;">{{ message }}</div>
+        {% endfor %}
+        <!--------------------------------------------------------------------------->
+        {{ form.password(class='form-control', placeholder="Enter your password") }}
+      </div>
+      
+      <div class="form-group">
         {{ form.gender.label }}
         <!---Error Message-->
         {% for message in form.name.errors %}
@@ -57,6 +67,16 @@
         {% endfor %}
         <!--------------------------------------------------------------------------->
         {{ form.email(class = "form-control", placeholder="eg. myname@example.com")}}
+      </div>
+      
+       <div class="form-group">
+        {{ form.location.label }}
+        <!---Error Message-->
+        {% for message in form.name.errors %}
+        <div style="color:red; font-size:15px;">{{ message }}</div>
+        {% endfor %}
+        <!--------------------------------------------------------------------------->
+        {{ form.location(class = "form-control", placeholder="eg. Kingston, Jamaica")}}
       </div>
       
       <div class="form-group">
