@@ -101,6 +101,8 @@ def jwt_token_required(fn):
                 current_user = User.query.filter_by(username = user_data['user']).first()
             except jwt.exceptions.InvalidSignatureError:
                 return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
+            except jwt.exceptions.DecodeError:
+                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
             return fn(*args,**kwargs)
     return decorated
 
