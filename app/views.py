@@ -46,7 +46,7 @@ def jwt_token_required(fn):
                 return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
             except jwt.exceptions.DecodeError:
                 return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
-            return fn(*args,**kwargs)
+            return fn(current_user,*args,**kwargs)
     return decorated
 
 
@@ -58,8 +58,7 @@ def login():
             
         username = loginForm.username.data
         password = loginForm.password.data
-        
-        users  = User.query.filter_by(username=username).all()
+        users    = User.query.filter_by(username=username).all()
         
         if len(users) == 0:
             return jsonify({'error': 'Invalid username or password'})
@@ -86,7 +85,6 @@ def logout(current_user):
 
 @app.route('/api/users/register', methods = ['POST', 'GET'])
 def register():
-    
     signForm = SignUpForm()
     
     if request.method == 'POST' and signForm.validate_on_submit():
@@ -101,8 +99,6 @@ def register():
         photo    = request.files['image']
         filename = secure_filename(photo.filename)
         photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        
-        #userId = createId(first,last,gender)
         
         user = User(username = username, password = hashed_password, firstname = firstname,\
         lastname = lastname, email = email, location = location, biography = bio, \
@@ -119,7 +115,7 @@ def register():
 
 @app.route('/api/users/<user_id>',methods = ['GET'])
 @jwt_token_required
-def get_user_details(user_id):
+def get_user_details(current_user,user_id):
     """Returns json object containing the details for the user with
     id <user_id>
     """
@@ -134,13 +130,12 @@ def get_user_details(user_id):
         return jsonify(user_data)
     return jsonify_errors(['Only GET requests are accepted'])
     
-        
-
-#------------------------Posts Routes--------------------------
+    
+#---------------------------Posts Routes-----------------------------
 @app.route('/api/users/<user_id>/posts',methods = ['POST'])
 @jwt_token_required
-def post(user_id):
-    """Creates post for currently logged in user"""
+def post(current_user,user_id):
+    """Creates post for currently logged in user with id <user_id>"""
     form = Upload()
     user = User.query.filter_by(id = user_id).first()
     
@@ -162,7 +157,7 @@ def post(user_id):
 
 @app.route('/api/users/<user_id>/posts',methods = ['GET'])
 @jwt_token_required
-def view_posts(user_id):
+def view_posts(current_user,user_id):
     """Gets a jsonified list of all the posts made by 
     the user with id <user_id>
     """
@@ -172,17 +167,15 @@ def view_posts(user_id):
         return jsonify({'error': 'This user does not exist'})
         
     if request.method == 'GET':
-        posts = Post.query.filter_by(userid = user_id).all()
+        posts         = Post.query.filter_by(userid = user_id).all()
         list_of_posts = [dictify(post) for post in posts]
         return jsonify({'POSTS':list_of_posts})
     return jsonify_errors(['Only GET requests are accepted'])
 
 
 @app.route('/api/posts',methods = ['GET'])
-@jwt_token_required
 def get_all_posts():
     """Returns a jsonified list of all posts made by all users"""
-    
     if request.method == 'GET':
         all_posts         = Post.query.all()
         list_of_all_posts = [dictify(post) for post in all_posts]
@@ -190,10 +183,32 @@ def get_all_posts():
     return jsonify_errors(['Only GET requests are accepted'])
     
     
+#------------------------Follow Routes--------------------------    
+@app.route('/api/users/<user_id>/follow',methods = ['POST'])
+@jwt_token_required
+def follow_user(current_user,user_id):
+    """Creates a relationship where the currently logged in 
+    user follows the user with id <user_id>
+    """
+    user = User.query.filter_by(id = user_id).first()
     
+    if user == None:
+        return jsonify({'error': 'This user does not exist'})
+    
+    if request.method == 'POST':
+        follower_id         = current_user.id
+        follow_relationship = Follow(follower_id=follower_id,userid=user_id)
+        db.session.add(follow_relationship)
+        db.session.commit()
+        response = {'follower_id':follower_id,'user_id':user_id}
+        return jsonify(response)
+    return jsonify_errors(['Only POST requests are accepted'])
+        
+    
+
 @app.route('/api/users/<user_id>/follow',methods = ['GET'])
 @jwt_token_required
-def get_number_of_followers(user_id):
+def get_number_of_followers(current_user,user_id):
     """Returns a json object with the number of followers for the 
     user with id <user_id>
     """
@@ -206,8 +221,6 @@ def get_number_of_followers(user_id):
         number_of_followers = len(Follow.query.filter_by(userid = user_id).all())
         return jsonify({'followers':number_of_followers})
     return jsonify_errors(['Only GET requests are accepted'])
-
-
 
 
 ###
@@ -249,14 +262,6 @@ def form_errors(form):
             error_messages.append(message)
 
     return error_messages
-
-
-def createId(firstname,password,username):
-    fname = firstname[:4]
-    Pass = password[:2]
-    uname = username[:4]
-    id = fname+Pass.upper()+uname
-    return id
     
 
 def flash_errors(form):
@@ -282,7 +287,7 @@ def add_header(response):
     to we could change max-age to 600 seconds which would be 10 minutes.
     """
     response.headers['X-UA-Compatible'] = 'IE=Edge,chrome=1'
-    response.headers['Cache-Control'] = 'public, max-age=0'
+    response.headers['Cache-Control']   = 'public, max-age=0'
     return response
 
 

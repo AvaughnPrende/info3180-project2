@@ -99,4 +99,3 @@ class Follow(db.Model):
         
     def __repr__(self):
         return '<Follow User: {0} - Followed by: {1}>'.format(self.userid,self.folloer_id)
-
