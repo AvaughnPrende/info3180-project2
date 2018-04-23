@@ -140,6 +140,7 @@ def post(user_id):
         return jsonify_form_errors(form_errors(form))
 
 
+
 @app.route('/api/users/<user_id>/posts',methods = ['GET'])
 @jwt_token_required
 def view_posts(user_id):
@@ -159,19 +160,49 @@ def view_posts(user_id):
         return jsonify({'error': 'Only GET requests are accepted'})
 
 
-@app.route('/users/{user_id}')
-def userProfile(user_id):
-    """Render the website's about page."""
-    user = User.query.get(user_id)
-    post = Post.query.get(user_id)
-    
-    posts         = Post.query.filter_by(user_id=User.user_id)
-    count_post    = posts.count()
-    follows       = Follow.query.filter_by(user_id = Follow.user_id)
-    count_follows = follows.count()
-    
-    return render_template('userProfile.html', user=user, count_post = count_post, count_follows = count_follows, post = post)
 
+@app.route('/api/users/<user_id>/follow',methods = ['GET'])
+@jwt_token_required
+def get_number_of_followers(user_id):
+    """Returns a json object with the number of followers for the 
+    user with id <user_id>
+    """
+    user = User.query.filter_by(id = user_id).first()
+    
+    if user == None:
+        return jsonify({'error':'This user does not exist'})
+    
+    if request.method == 'GET':
+        number_of_followers = len(Follow.query.filter_by(userid = user_id).all())
+        return jsonify({'followers':number_of_followers})
+    return jsonify({'error': 'Only GET requests are accepted'})
+
+
+@app.route('/api/posts',methods = ['GET'])
+@jwt_token_required
+def get_all_posts():
+    """Returns a jsonified list of all posts made by all users"""
+    
+    if request.method == 'GET':
+        all_posts         = Post.query.all()
+        list_of_all_posts = [dictify(post) for post in all_posts]
+        return jsonify({'POSTS':list_of_all_posts})
+    return jsonify({'error': 'Only GET requests are accepted'})
+    
+
+
+# @app.route('/users/{user_id}')
+# def userProfile(user_id):
+#     """Render the website's about page."""
+#     user = User.query.get(user_id)
+#     post = Post.query.get(user_id)
+    
+#     posts         = Post.query.filter_by(user_id=User.user_id)
+#     count_post    = posts.count()
+#     follows       = Follow.query.filter_by(user_id = Follow.user_id)
+#     count_follows = follows.count()
+    
+#     return render_template('userProfile.html', user=user, count_post = count_post, count_follows = count_follows, post = post)
 
 
 
@@ -188,7 +219,7 @@ def dictify(data_object):
     
     for key,value in key_value_pairs:
         if not key == '_sa_instance_state':
-        #All db ojects will have this but we do not need it
+        #All db ojects will have this but we do not need it here
         # for example: ('_sa_instance_state', <sqlalchemy.orm.state.InstanceState object at 0x7f6696d831d0>)
             object_dictionary[key] = value
     return object_dictionary
