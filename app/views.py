@@ -27,6 +27,62 @@ def index():
     """Render the initial webpage and then let VueJS take control."""
     return render_template('index.html')
   
+#----------API ROUTES--------------API ROUTES-----------API ROUTES------------------#
+
+#-------------Authentication Reoutes----------------------
+def jwt_token_required(fn):
+    """A decorator functions that secures endpoints that require
+    the user to be logged in"""
+    @wraps(fn)
+    def decorated(*args,**kwargs):
+        jwt_token = request.headers.get('Authorization')
+        if jwt_token == None:
+            return jsonify({'error':'ACCESS DENIED: No token provided'})
+        else:
+            try:
+                user_data    = jwt.decode(jwt_token,app.config['SECRET_KEY'])
+                current_user = User.query.filter_by(username = user_data['user']).first()
+            except jwt.exceptions.InvalidSignatureError:
+                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
+            except jwt.exceptions.DecodeError:
+                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
+            return fn(*args,**kwargs)
+    return decorated
+
+
+@app.route("/api/auth/login", methods=["GET", "POST"])
+def login():
+    loginForm = LoginForm()
+    
+    if request.method == "POST" and loginForm.validate_on_submit():
+            
+        username = loginForm.username.data
+        password = loginForm.password.data
+        
+        users  = User.query.filter_by(username=username).all()
+        
+        if len(users) == 0:
+            return jsonify({'error': 'Invalid username or password'})
+        elif not check_password_hash(users[0].password,password):
+            return jsonify({'error': 'Invalid username or password'})
+        else:
+            user = users[0]
+            jwt_token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
+            response = {'message': 'User successfully logged in','jwt_token':jwt_token}
+            return jsonify(response)
+    return jsonify_errors(form_errors(loginForm))
+
+
+@app.route('/api/auth/logout',methods = ['GET'])
+@jwt_token_required
+def logout(current_user):
+    """Logs out a currently logged in user"""
+    if request.method == 'GET':
+        return jsonify({'message': 'User successfully logged out'})
+    return jsonify_errors(['Only GET requests are accepted'])
+
+
+#----------------------Users Reoutes----------------------
 
 @app.route('/api/users/register', methods = ['POST', 'GET'])
 def register():
@@ -58,64 +114,29 @@ def register():
         response = {'message': 'User successfully registered'}
         return jsonify(response)
         
-    else:
-        return jsonify_form_errors(form_errors(signForm))
+    return jsonify_errors(form_errors(signForm))
         
 
-
-@app.route("/api/auth/login", methods=["GET", "POST"])
-def login():
-    loginForm = LoginForm()
-    
-    if request.method == "POST" and loginForm.validate_on_submit():
-            
-        username = loginForm.username.data
-        password = loginForm.password.data
-        
-        users  = User.query.filter_by(username=username).all()
-        
-        if len(users) == 0:
-            return jsonify({'error': 'Invalid username or password'})
-        elif not check_password_hash(users[0].password,password):
-            return jsonify({'error': 'Invalid username or password'})
-        else:
-            user = users[0]
-            jwt_token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
-            response = {'message': 'User successfully logged in','jwt_token':jwt_token}
-            return jsonify(response)
-    else:
-        return jsonify_form_errors(form_errors(loginForm))
-
-
-def jwt_token_required(fn):
-    """A decorator functions that secures endpoints that require
-    the user to be logged in"""
-    @wraps(fn)
-    def decorated(*args,**kwargs):
-        jwt_token = request.headers.get('Authorization')
-        if jwt_token == None:
-            return jsonify({'error':'ACCESS DENIED: No token provided'})
-        else:
-            try:
-                user_data    = jwt.decode(jwt_token,app.config['SECRET_KEY'])
-                current_user = User.query.filter_by(username = user_data['user']).first()
-            except jwt.exceptions.InvalidSignatureError:
-                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
-            except jwt.exceptions.DecodeError:
-                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
-            return fn(*args,**kwargs)
-    return decorated
-
-
-#log in required
-@app.route('/api/auth/logout',methods = ['GET'])
+@app.route('/api/users/<user_id>',methods = ['GET'])
 @jwt_token_required
-def logout(current_user):
-    """Logs out a currently logged in user"""
+def get_user_details(user_id):
+    """Returns json object containing the details for the user with
+    id <user_id>
+    """
+    user = User.query.filter_by(id = user_id).first()
+    
+    if user == None:
+        return jsonify_errors(['User does not exist'])
+    
     if request.method == 'GET':
-        return jsonify({'message':current_user.username +  ' successfully logged out'})
+        user_data = dictify(user)
+        del user_data['password']
+        return jsonify(user_data)
+    return jsonify_errors(['Only GET requests are accepted'])
+    
+        
 
-
+#------------------------Posts Routes--------------------------
 @app.route('/api/users/<user_id>/posts',methods = ['POST'])
 @jwt_token_required
 def post(user_id):
@@ -136,9 +157,7 @@ def post(user_id):
         db.session.commit()
         image.save('app/static/images/' + filename)
         return jsonify({'message':'Post successfully created'})
-    else:
-        return jsonify_form_errors(form_errors(form))
-
+    return jsonify_errors(form_errors(form))
 
 
 @app.route('/api/users/<user_id>/posts',methods = ['GET'])
@@ -156,11 +175,22 @@ def view_posts(user_id):
         posts = Post.query.filter_by(userid = user_id).all()
         list_of_posts = [dictify(post) for post in posts]
         return jsonify({'POSTS':list_of_posts})
-    else:
-        return jsonify({'error': 'Only GET requests are accepted'})
+    return jsonify_errors(['Only GET requests are accepted'])
 
 
-
+@app.route('/api/posts',methods = ['GET'])
+@jwt_token_required
+def get_all_posts():
+    """Returns a jsonified list of all posts made by all users"""
+    
+    if request.method == 'GET':
+        all_posts         = Post.query.all()
+        list_of_all_posts = [dictify(post) for post in all_posts]
+        return jsonify({'POSTS':list_of_all_posts})
+    return jsonify_errors(['Only GET requests are accepted'])
+    
+    
+    
 @app.route('/api/users/<user_id>/follow',methods = ['GET'])
 @jwt_token_required
 def get_number_of_followers(user_id):
@@ -175,34 +205,8 @@ def get_number_of_followers(user_id):
     if request.method == 'GET':
         number_of_followers = len(Follow.query.filter_by(userid = user_id).all())
         return jsonify({'followers':number_of_followers})
-    return jsonify({'error': 'Only GET requests are accepted'})
+    return jsonify_errors(['Only GET requests are accepted'])
 
-
-@app.route('/api/posts',methods = ['GET'])
-@jwt_token_required
-def get_all_posts():
-    """Returns a jsonified list of all posts made by all users"""
-    
-    if request.method == 'GET':
-        all_posts         = Post.query.all()
-        list_of_all_posts = [dictify(post) for post in all_posts]
-        return jsonify({'POSTS':list_of_all_posts})
-    return jsonify({'error': 'Only GET requests are accepted'})
-    
-
-
-# @app.route('/users/{user_id}')
-# def userProfile(user_id):
-#     """Render the website's about page."""
-#     user = User.query.get(user_id)
-#     post = Post.query.get(user_id)
-    
-#     posts         = Post.query.filter_by(user_id=User.user_id)
-#     count_post    = posts.count()
-#     follows       = Follow.query.filter_by(user_id = Follow.user_id)
-#     count_follows = follows.count()
-    
-#     return render_template('userProfile.html', user=user, count_post = count_post, count_follows = count_follows, post = post)
 
 
 
@@ -225,7 +229,7 @@ def dictify(data_object):
     return object_dictionary
 
 
-def jsonify_form_errors(list_of_errors):
+def jsonify_errors(list_of_errors):
     """Returns a json object containing the errors from the form"""
     errors_list = []
     for error in list_of_errors:
