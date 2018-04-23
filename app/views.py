@@ -215,12 +215,34 @@ def get_number_of_followers(current_user,user_id):
     user = User.query.filter_by(id = user_id).first()
     
     if user == None:
-        return jsonify({'error':'This user does not exist'})
+        return jsonify_errors(['This user does not exist'])
     
     if request.method == 'GET':
         number_of_followers = len(Follow.query.filter_by(userid = user_id).all())
         return jsonify({'followers':number_of_followers})
     return jsonify_errors(['Only GET requests are accepted'])
+
+
+#------------------------Likes Routes-------------------------- 
+@app.route('/api/posts/<post_id>/like',methods = ['POST'])
+@jwt_token_required
+def like_post(current_user,post_id):
+    """Creates a like relationship where the current users likes 
+    the post with id <post_id>
+    """
+    post = Post.query.filter_by(id = post_id).first()
+    
+    if post == None:
+        return jsonify_errors(['This post does not exist'])
+    
+    if request.method == 'POST':
+        like = Like(postid = post_id,userid = post.userid)
+        db.session.add(like)
+        db.session.commit()
+        number_of_likes = len(Like.query.filter_by(postid = post_id).all())
+        return jsonify({'message': 'You like that Post','likes':number_of_likes})
+    return jsonify_errors(['Only POST requests are accepted'])
+
 
 
 ###
