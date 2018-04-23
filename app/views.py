@@ -29,7 +29,7 @@ def index():
   
 #----------API ROUTES--------------API ROUTES-----------API ROUTES------------------#
 
-#-------------Authentication Reoutes----------------------
+#------------------Authentication Routes----------------------
 def jwt_token_required(fn):
     """A decorator functions that secures endpoints that require
     the user to be logged in"""
@@ -196,14 +196,14 @@ def follow_user(current_user,user_id):
         return jsonify({'error': 'This user does not exist'})
     
     if request.method == 'POST':
-        follower_id         = current_user.id
+        user_id             = request.values.get('user_id')
+        follower_id         = request.values.get('follower_id')
         follow_relationship = Follow(follower_id=follower_id,userid=user_id)
         db.session.add(follow_relationship)
         db.session.commit()
-        response = {'follower_id':follower_id,'user_id':user_id}
+        response = {'message':'You are now following that user'}
         return jsonify(response)
     return jsonify_errors(['Only POST requests are accepted'])
-        
     
 
 @app.route('/api/users/<user_id>/follow',methods = ['GET'])
@@ -236,7 +236,8 @@ def like_post(current_user,post_id):
         return jsonify_errors(['This post does not exist'])
     
     if request.method == 'POST':
-        like = Like(postid = post_id,userid = post.userid)
+        like = Like(postid = request.values.get('post_id'),\
+                    userid = request.values.get('user_id'))
         db.session.add(like)
         db.session.commit()
         number_of_likes = len(Like.query.filter_by(postid = post_id).all())
