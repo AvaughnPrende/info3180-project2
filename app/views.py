@@ -140,6 +140,24 @@ def post(user_id):
         return jsonify_form_errors(form_errors(form))
 
 
+@app.route('/api/users/<user_id>/posts',methods = ['GET'])
+@jwt_token_required
+def view_posts(user_id):
+    """Gets a jsonified list of all the posts made by 
+    the user with id <user_id>
+    """
+    user = User.query.filter_by(id = user_id).first()
+    
+    if user == None:
+        return jsonify({'error': 'This user does not exist'})
+        
+    if request.method == 'GET':
+        posts = Post.query.filter_by(userid = user_id).all()
+        list_of_posts = [dictify(post) for post in posts]
+        return jsonify({'POSTS':list_of_posts})
+    else:
+        return jsonify({'error': 'Only GET requests are accepted'})
+
 
 @app.route('/users/{user_id}')
 def userProfile(user_id):
@@ -160,6 +178,21 @@ def userProfile(user_id):
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+def dictify(data_object):
+    """
+    Returns a dictionary containing the attributes and thier values
+    for an object returned from a DB query
+    """
+    key_value_pairs   = data_object.__dict__.items()
+    object_dictionary = {}
+    
+    for key,value in key_value_pairs:
+        if not key == '_sa_instance_state':
+        #All db ojects will have this but we do not need it
+        # for example: ('_sa_instance_state', <sqlalchemy.orm.state.InstanceState object at 0x7f6696d831d0>)
+            object_dictionary[key] = value
+    return object_dictionary
+
 
 def jsonify_form_errors(list_of_errors):
     """Returns a json object containing the errors from the form"""
