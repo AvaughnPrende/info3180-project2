@@ -10,7 +10,7 @@ from app import app,db
 from flask import render_template, request, redirect, url_for, flash, jsonify,session,abort
 from flask_login import login_user, logout_user, current_user, login_required
 from app import models
-from forms import SignUpForm,LoginForm
+from forms import SignUpForm,LoginForm,Upload
 from werkzeug.utils import secure_filename
 from app.models import User,Post, Follow, Like
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -28,7 +28,7 @@ def index():
     return render_template('index.html')
   
 
-@app.route('/register', methods = ['POST', 'GET'])
+@app.route('/api/users/register', methods = ['POST', 'GET'])
 def register():
     
     signForm = SignUpForm()
@@ -63,7 +63,7 @@ def register():
         
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/api/auth/login", methods=["GET", "POST"])
 def login():
     loginForm = LoginForm()
     
@@ -101,12 +101,12 @@ def jwt_token_required(fn):
                 current_user = User.query.filter_by(username = user_data['user']).first()
             except jwt.exceptions.InvalidSignatureError:
                 return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
-            return fn(current_user,*args,**kwargs)
+            return fn(*args,**kwargs)
     return decorated
 
 
 #log in required
-@app.route('/logout',methods = ['GET'])
+@app.route('/api/auth/logout',methods = ['GET'])
 @jwt_token_required
 def logout(current_user):
     """Logs out a currently logged in user"""
@@ -114,20 +114,30 @@ def logout(current_user):
         return jsonify({'message':current_user.username +  ' successfully logged out'})
 
 
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     logout_user()
-#     flash("You are now logged out","danger")
-#     """Render the website's about page."""
-#     return redirect(url_for("index"))
+@app.route('/api/users/<user_id>/posts',methods = ['POST'])
+@jwt_token_required
+def post(user_id):
+    """Creates post for currently logged in user"""
+    form = Upload()
+    user = User.query.filter_by(id = user_id).first()
+    
+    if user == None:
+        return jsonify({'error': 'This user does not exist'})
+    
+    if request.method == 'POST' and form.validate_on_submit():
+        image    = request.files['image']
+        caption  = form.caption.data
+        filename = secure_filename(image.filename)
+        
+        post = Post(userid = user_id,photo = filename,caption = caption,created_on = current_date())
+        db.session.add(post)
+        db.session.commit()
+        image.save('app/static/images/' + filename)
+        return jsonify({'message':'Post successfully created'})
+    else:
+        return jsonify_form_errors(form_errors(form))
 
 
-# @app.route('/explore')
-# @login_required
-# def explore():
-#     users = User.query.all()
-#     return render_template('explore.html', users=users)
 
 @app.route('/users/{user_id}')
 def userProfile(user_id):
@@ -142,10 +152,8 @@ def userProfile(user_id):
     
     return render_template('userProfile.html', user=user, count_post = count_post, count_follows = count_follows, post = post)
 
-@app.route('/posts/new')
-def post():
-    """Render the website's about page."""
-    return render_template('post.html')
+
+
 
 ###
 # The functions below should be applicable to all Flask apps.
