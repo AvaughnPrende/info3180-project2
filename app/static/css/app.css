@@ -16,6 +16,7 @@ footer  {
     width: 380px;
     height: 380px;
     background: linear-gradient(to right, #ff4264 , #af00ad);
+    font-family: 'Fjalla One', sans-serif;
 }
 
 .scont {
@@ -25,10 +26,13 @@ footer  {
     width: 400px;
     height: 980px;
     background: linear-gradient(to right, #ff4264 , #af00ad);
+    font-family: 'Fjalla One', sans-serif;
+     color: black;
 }
 
 
 .form-group{
+    
     margin-left: 5px;
     margin-right: 5px;
 }
@@ -53,5 +57,8 @@ footer  {
 }
 
 .phrase{
+    font-family: 'Quicksand', sans-serif;
     text-align: center;
+    font-size: 25px;
+    font-weight: bold;
 }

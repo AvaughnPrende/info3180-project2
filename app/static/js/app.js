@@ -104,6 +104,45 @@ const loginForm = Vue.component('loginform',{
     
 });
 
+const uploadForm = Vue.component('uploadForm',{
+    template:
+    `
+    <div class="upcont">
+        <div class="upload-form">
+            <div class="head">
+            <h2>Upload</h2>
+            </div>
+            <br>
+            {{token}}
+            <div class="form-ish">
+                <form action="" method="post" name = 'upload_form' id = 'uploadform'>
+                
+                <div class="form-group">
+                    <label for="photo_upload" id="photo-upload_label"><h5>Photo</h5></label>
+                    <input id="photo" type="file" name="photo">
+                </div><br>
+                
+                <div class="form-group">
+                    <label for="caption" id="caption_label"><h5>Caption</h5></label>
+                    <textarea class = 'form-control' id = 'biography' name = 'biography' rows = '5'></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" name="submit" class="btn btn-primary">Log in</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    `,
+    data:function (){
+        return {
+            token: token
+        };
+    }
+    
+});
+
 const signupForm = Vue.component('signupform',{
     template:
     `
@@ -212,11 +251,55 @@ const profile = Vue.component('profile',{
             <div class="imgupld">
                 {% for images in images %}
                 <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <img class="img-responsive" src=" {{url_for('static', filename= 'images/' + user.photo)}}" height="275" width="275" alt = "image upload" >
+                    <img class="img-responsive" src=" {{url_for('static', filename= 'images/' + user.photo)}}" height="65" width="65" alt = "image upload" >
                 </div>
                 {% endfor %}
             <div>
         </div>
+    </div>
+    `,
+    data:function (){
+        return {
+            token: token
+        };
+    }
+    
+});
+
+
+const explore = Vue.component('explore',{
+    template:
+    `
+    <div class="platter">
+        
+        <div class="outerborder">
+            
+            <div class="uname">
+                {{user.username}}
+            </div>
+            
+            <div class="content">
+            
+                <div class="imgpst">
+                    <img class="img-responsive" src=" {{url_for('static', filename= 'images/' + user.photo)}}" height="275" width="275" alt = "image upload" >
+                </div>
+            
+                <div class="btns">
+                    <div class="likebtn">
+                        <button type="button"><img src="/static/images/like.png" height="15px" width="15px" alt="like"></button>
+                    </div>
+                    <div class="comntbtn">
+                        <button type="button"><img src="/static/images/comment.png" height="15px" width="15px" alt="like"></button>
+                    </div>
+                </div>
+                
+                <div>
+                    <p>{{user.description}}</p>
+                </div>
+            </div>
+            
+        </div>
+        
     </div>
     `,
     data:function (){
