@@ -1,12 +1,57 @@
 body {
     padding-top: 5rem;
-    background-color: grey;
+    background-image: url(/static/images/background.jpg);
+    
 }
 
 footer  {
     padding-top: 20px;
 }
 
-.login-form {
-    padding-left:75px;
+.fcont {
+    margin:auto;
+    margin-top: 60px;
+    border: solid 0px #af00ad;
+    border-radius: 5px;
+    width: 380px;
+    height: 380px;
+    background: linear-gradient(to right, #ff4264 , #af00ad);
+}
+
+.scont {
+    margin:auto;
+    border: solid 0px #af00ad;
+    border-radius: 5px;
+    width: 400px;
+    height: 980px;
+    background: linear-gradient(to right, #ff4264 , #af00ad);
+}
+
+
+.form-group{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.head{
+    padding-top: 20px;
+    text-align: center;
+}
+
+.containment-box{
+    border: solid 10px linear-gradient(to right, #ff4264 , #af00ad);
+    border-radius: 5px;
+    width: 600px;
+    height: 280px;
+    margin:auto;
+    margin-top: 60px;
+    background: linear-gradient(to right, #ff4264 , #af00ad);
+}
+
+.logo{
+    margin:auto;
+}
+
+.phrase{
+    text-align: center;
 }
