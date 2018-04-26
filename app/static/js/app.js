@@ -2,15 +2,29 @@
 Vue.component('app-header', {
     template: `
         <header>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
-              <a class="navbar-brand" href="#"><img src="/static/images/logo.png" height="48px" width="120px" alt="Logo"></a>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top">
+              <router-link class="nav-link" to="/"><img src="/static/images/logo.png" height="48px" width="120px" alt="Logo"></router-link>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
+                </ul>
+                
+                <!--Should be modified so only a user which is logged in can see certain routes-->
+                
+                <ul class="navbar-nav">
                 <li class="nav-item active">
                     <router-link class="nav-link" to="/">Home<span class="sr-only">(current)</span></router-link>
+                </li>
+                <li class="nav-item active">
+                    <router-link class="nav-link" to="/explore">Explore<span class="sr-only">(current)</span></router-link>
+                </li>
+                <li class="nav-item active">
+                    <router-link class="nav-link" to="/profile">Profile<span class="sr-only">(current)</span></router-link>
+                </li>
+                <li class="nav-item active">
+                    <router-link class="nav-link" to="/uploadForm">Upload<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
                     <router-link class="nav-link" to="/loginform">Login<span class="sr-only">(current)</span></router-link>
@@ -73,7 +87,7 @@ const loginForm = Vue.component('loginform',{
     <div class="fcont">
         <div class="login-form">
             <div class="head">
-            <h2>Please Log in</h2>
+                <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
             <br>
             {{token}}
@@ -89,7 +103,7 @@ const loginForm = Vue.component('loginform',{
                     <input class = 'form-control' id = 'password' type = 'password' name = 'password' placeholder="Enter Password">
                 </div>
                 <div class="form-group">
-                    <button type="submit" name="submit" class="btn btn-primary">Log in</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block">Log in</button>
                 </div>
                 </form>
             </div>
@@ -124,11 +138,11 @@ const uploadForm = Vue.component('uploadForm',{
                 
                 <div class="form-group">
                     <label for="caption" id="caption_label"><h5>Caption</h5></label>
-                    <textarea class = 'form-control' id = 'biography' name = 'biography' rows = '5'></textarea>
+                    <textarea class ="form-control" id ="caption" name ="caption" rows = '5'></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <button type="submit" name="submit" class="btn btn-primary">Log in</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block">Upload</button>
                 </div>
                 </form>
             </div>
@@ -149,7 +163,8 @@ const signupForm = Vue.component('signupform',{
     <div class="scont">
         <div id = 'register-page'>
             <div class="head">
-                <h2>Register</h2>
+                <img src="/static/images/logo.png" height="48px" width="120px" alt="Logo">
+                <p>Let the world know of your presence.</p>
             </div>
             <form action="" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
                 <div class="form-group">
@@ -193,7 +208,7 @@ const signupForm = Vue.component('signupform',{
                 </div><br>
                 
                 <div class="form-group">
-                    <button type="submit" name="submit" class="btn btn-primary">Sign Up</button>
+                    <button type="submit" name="submit" class="btn btn-primary btn-block">Sign Up</button>
                 </div>
             </form>
         </div>
@@ -315,7 +330,10 @@ const router = new VueRouter({
     routes: [
         { path: "/",           component: Home },
         { path: "/loginform",  component: loginForm},
-        { path: "/register",   component: signupForm}
+        { path: "/register",   component: signupForm},
+        { path: "/uploadForm",   component: uploadForm},
+        { path: "/profile",   component: profile},
+        { path: "/explore",   component: explore}
     ]
 });
 

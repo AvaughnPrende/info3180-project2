@@ -8,9 +8,13 @@ footer  {
     padding-top: 20px;
 }
 
+.bg-nav{
+    background: linear-gradient(to right, #ff4264 , #af00ad);
+}
+
 .fcont {
     margin:auto;
-    margin-top: 60px;
+    margin-top: 30px;
     border: solid 0px #af00ad;
     border-radius: 5px;
     width: 380px;
@@ -21,10 +25,11 @@ footer  {
 
 .scont {
     margin:auto;
+    margin-top: 30px;
     border: solid 0px #af00ad;
     border-radius: 5px;
     width: 400px;
-    height: 980px;
+    height: 1010px;
     background: linear-gradient(to right, #ff4264 , #af00ad);
     font-family: 'Fjalla One', sans-serif;
      color: black;
@@ -61,4 +66,23 @@ footer  {
     text-align: center;
     font-size: 25px;
     font-weight: bold;
+}
+
+.upcont {
+    margin:auto;
+    margin-top: 30px;
+    border: solid 0px #af00ad;
+    border-radius: 5px;
+    width: 380px;
+    height: 430px;
+    background: linear-gradient(to right, #ff4264 , #af00ad);
+    font-family: 'Fjalla One', sans-serif;
+}
+
+.platter {
+    margin:auto;
+    border: solid 1px #af00ad;
+    border-radius: 5px;
+    background: grey;
+    font-family: 'Fjalla One', sans-serif;
 }
