@@ -37,15 +37,23 @@ def jwt_token_required(fn):
     def decorated(*args,**kwargs):
         jwt_token = request.headers.get('Authorization')
         if jwt_token == None:
-            return jsonify({'error':'ACCESS DENIED: No token provided'})
+            return jsonify_errors(['ACCESS DENIED: No token provided'])
         else:
+            token_parts = jwt_token.split()
+            
+            if token_parts[0].lower() != 'bearer':
+                return jsonify_errors(['Invalid schema for token'])
+            elif len(token_parts) == 1:
+                return jsonify_errors(['Token not found'])
+            elif len(token_parts)>1:
+                return jsonify_errors(['Invalid Token'])
             try:
                 user_data    = jwt.decode(jwt_token,app.config['SECRET_KEY'])
                 current_user = User.query.filter_by(username = user_data['user']).first()
             except jwt.exceptions.InvalidSignatureError:
-                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
+                return jsonify_errors(['ACCESS DENIED: Ivalid Token'])
             except jwt.exceptions.DecodeError:
-                return jsonify({'error':'ACCESS DENIED: Ivalid Token'})
+                return jsonify_errors(['ACCESS DENIED: Ivalid Token'])
             return fn(current_user,*args,**kwargs)
     return decorated
 
