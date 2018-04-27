@@ -1,4 +1,5 @@
 /* Add your Application JavaScript */
+localStorage.setItem('csrf',token);
 Vue.component('app-header', {
     template: `
         <header>
@@ -160,11 +161,11 @@ const uploadForm = Vue.component('uploadForm',{
             </div>
             <br>
             <div class="form-ish">
-                <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="uploadPhoto" name = 'form'>
+                <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="createNewPost" name = 'uploadForm'>
                 
                 <div class="form-group">
                     <label for="photo_upload" id="photo-upload_label"><h5>Photo</h5></label>
-                    <input id="photo" type="file" name="photo">
+                    <input id="photo" type="file" name="image">
                 </div><br>
                 
                 <div class="form-group">
@@ -182,8 +183,44 @@ const uploadForm = Vue.component('uploadForm',{
     `,
     data:function (){
         return {
+            response:'',
+            errors:[]
         };
     },
+    methods:{
+        createNewPost: function(){
+            let self         = this;
+            let uploadform   = document.getElementById("uploadform");
+            let form_data    = new FormData(uploadform);
+            let current_user = localStorage.getItem('current_user');
+            
+
+            
+            fetch('/api/users/'+current_user+'/posts',{
+                method:  'POST',
+                body: form_data,
+                headers: {
+                        'X-CSRFToken': token,
+                        'Authorization': 'Bearer '  + localStorage.getItem('token')
+                         },
+                        credentials: 'same-origin'
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                if(jsonResonse.Errors == null){
+                    this.response = jsonResonse.message;
+                    this.$router.push({path:'explore'});
+                    console.log(this.response);
+                }
+                else{
+                    this.errors = jsonResonse.Errors;
+                    console.log(this.errors);
+                }
+            })
+        }
+    }
 });
 
 const signupForm = Vue.component('signupform',{
@@ -261,7 +298,8 @@ const signupForm = Vue.component('signupform',{
                 method:  'POST',
                 body: form_data,
                 headers: {
-                        'X-CSRFToken': token
+                        'X-CSRFToken': token,
+                        'Authorization': 'Bearer '  + localStorage.getItem('token')
                          },
                         credentials: 'same-origin'
             })
@@ -277,7 +315,7 @@ const signupForm = Vue.component('signupform',{
                 }
                 else{
                     console.log(jsonResonse);
-                    this.errors = jsonResonse.Errors;
+                    self.errors = jsonResonse.Errors;
                 }
             });
         }
@@ -356,7 +394,7 @@ const explore = Vue.component('explore',{
     `
     
     <div class="platter">
-        <div v-for = 'post in posts'>
+        <div v-for = 'post in posts.reverse()'>
         <div class="outerborder">
             <div class="uname">
                 {{post.user_id}}
@@ -416,7 +454,7 @@ const explore = Vue.component('explore',{
                     console.log(self.errors);
                 }
             })
-        }
+        },
 });
 
 // Define Routes

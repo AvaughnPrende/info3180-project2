@@ -45,8 +45,11 @@ def jwt_token_required(fn):
                 return jsonify_errors(['Invalid schema for token'])
             elif len(token_parts) == 1:
                 return jsonify_errors(['Token not found'])
-            elif len(token_parts)>1:
+            elif len(token_parts)>2:
                 return jsonify_errors(['Invalid Token'])
+            
+            jwt_token = token_parts[1]
+            
             try:
                 user_data    = jwt.decode(jwt_token,app.config['SECRET_KEY'])
                 current_user = User.query.filter_by(username = user_data['user']).first()
@@ -94,7 +97,6 @@ def logout(current_user):
 @app.route('/api/users/register', methods = ['POST', 'GET'])
 def register():
     signForm = SignUpForm()
-    print(signForm.photo)
     
     if request.method == 'POST' and signForm.validate_on_submit():
         
@@ -150,15 +152,19 @@ def get_user_details(current_user,user_id):
 @jwt_token_required
 def post(current_user,user_id):
     """Creates post for currently logged in user with id <user_id>"""
-    form = Upload()
+    uploadform = Upload()
     user = User.query.filter_by(id = user_id).first()
-    
+
     if user == None:
-        return jsonify({'error': 'This user does not exist'})
-    
-    if request.method == 'POST' and form.validate_on_submit():
+        return jsonify_errors(['User does not exist'])
+        
+        
+    if request.method == 'POST' and uploadform.validate_on_submit():
+
         image    = request.files['image']
-        caption  = form.caption.data
+        caption  = uploadform.caption.data
+        print('Image',image)
+        print(caption)
         filename = secure_filename(image.filename)
         
         post = Post(userid = user_id,photo = filename,caption = caption,created_on = current_date())
@@ -166,7 +172,7 @@ def post(current_user,user_id):
         db.session.commit()
         image.save('app/static/images/' + filename)
         return jsonify({'message':'Post successfully created'})
-    return jsonify_errors(form_errors(form))
+    return jsonify_errors(form_errors(uploadform))
 
 
 @app.route('/api/users/<user_id>/posts',methods = ['GET'])
@@ -176,7 +182,6 @@ def view_posts(current_user,user_id):
     the user with id <user_id>
     """
     user = User.query.filter_by(id = user_id).first()
-    
     if user == None:
         return jsonify({'error': 'This user does not exist'})
         
