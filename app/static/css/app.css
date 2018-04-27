@@ -55,10 +55,11 @@ footer  {
     border: solid 10px linear-gradient(to right, #ff4264 , #af00ad);
     border-radius: 5px;
     width: 600px;
-    height: 280px;
+    height: 340px;
     margin:auto;
     margin-top: 60px;
     background: linear-gradient(to right, #ff4264 , #af00ad);
+    text-align: center;
 }
 
 .logo{
@@ -83,12 +84,81 @@ footer  {
     font-family: 'Fjalla One', sans-serif;
 }
 
+.outside {
+    margin:auto;
+    margin-top: 5px;
+    border: solid 10px #ededed;
+    border-radius: 5px;
+    height: auto;
+    background: #ededed;
+    font-family: 'Fjalla One', sans-serif;
+    position: relative;
+}
+
+.top{
+    border: solid 0px #af00ad;
+    border-radius: 5px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    background: white;
+    position: relative;
+}
+
+.top-left{
+    display: grid;
+    grid-template-columns: 2fr;
+    position: relative;
+    text-align: center;
+    margin-top: 60px;
+    
+}
+
+.count{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    position: relative;
+    text-align: center;
+    font-family: 'Fjalla One', sans-serif;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+.top-right{
+    display: grid;
+    grid-template-columns: repeat(2,.4fr);
+    position: relative;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.bottom {
+    display: grid;
+    grid-template-columns: repeat(4,.4fr);
+    border-radius: 5px;
+    position: relative;
+    margin-top: 20px;
+    background: white;
+    
+}
+
 .platter {
     margin:auto;
-    border: solid 8px #af00ad;
+    border: solid 8px #f9f9f9;
     border-radius: 5px;
-    height: 800px
-    width: 60px;
-    background: grey;
+    height: 1000px;
+    background: #f9f9f9;
     font-family: 'Fjalla One', sans-serif;
+    position: relative;
+}
+
+.outerborder {
+    border: solid 4px #af00ad;
+    border-radius: 5px;
+    background: white;
+    position: relative;
+}
+
+.imgupld{
+    margin-top: 20px;
+    margin-bottom: 20px;
 }

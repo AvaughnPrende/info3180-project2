@@ -135,15 +135,19 @@ def get_user_details(current_user,user_id):
     """Returns json object containing the details for the user with
     id <user_id>
     """
+    print('here')
     user = User.query.filter_by(id = user_id).first()
-    
+    print(user)
     if user == None:
         return jsonify_errors(['User does not exist'])
     
     if request.method == 'GET':
         user_data = dictify(user)
         del user_data['password']
-        return jsonify(user_data)
+        posts = Post.query.filter_by(user_id = user.id)
+        images = [post.image for post in posts]
+        print(images)
+        return jsonify([user_data,images])
     return jsonify_errors(['Only GET requests are accepted'])
     
     

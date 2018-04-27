@@ -58,7 +58,10 @@ const Home = Vue.component('home', {
         <div class="phrase">
             <!--App Tagline/Catch Phrase-->
             <p>{{ welcome }}</p>
+            <router-link class="btn btn-success col-md-5" to="/register">Register</router-link>
+            <router-link class="btn btn-primary col-md-5" to="/loginform">Login</router-link>
         </div>
+        
     </div>   
     `,
     data: function() {
@@ -326,65 +329,100 @@ const profile = Vue.component('profile',{
     template:
     `
     <div class="outside">
+    
         <div class="top">
             <div class="top-right">
                 <div class="propic">
-                    <img src="{{url_for('static', filename = "images/"+ user.profile_photo) }}"></img>
+                    <!--<img :src=""></img>-->
+                    <img src="/static/images/person-male.png" height="200px" width="200px" alt="Logo">
                 </div>
                 <div class="userdeets">
                     <div class="uname">
                         <h3>{{ user.username }}</h3>
                     </div>
                     <div class="uflname">
-                        <h5>{{ user.firstname }} { {user.lastname }}</h5>
+                        <h4>{{ user.firstname }} {{ user.lastname }}</h4>
                     </div>
                     <div class="locndate">
-                        <p>{{ user.location }} <br> {{user.joined_on }}</p>
+                        <p>{{ user.location }} </p>
+                        <p><label>Joined:</label>{{user.joined_on }}</p>
                     </div>
                     <div class="bio">
-                        <p>{{ user.biogrphy }}</p>
+                        <p>{{ user.bio }}</p>
                     </div>
                 </div>
             </div>
         
             <div class="top-left">
+            
                 <div class="count">
                     <div class="posts">
-                        <h5>{{ count_post }}</h5>
+                        <h5>{{ user.postCount }}</h5>
                         <h6>Posts</h6>
                     </div>
                     <div class="folrs">
-                        <h5>{{ count_follows }}</h5> <!-- ignore for now {{ counter }} -->
+                        <h5>{{ user.followers }}</h5> <!-- ignore for now {{ counter }} -->
                         <h6>Followers</h6>
                     </div>
-                    <div class="folwg">
-                        <h5>{{ count_following }}</h5>
-                        <h6>Following</h6>
-                    </div>
                 </div>
+                
                 <div class="btn">
-                    <button type="button" class="btn btn-primary" v-on:click="counter += 1>Follow</button>
+                    <button type="button" class="btn btn-primary btn-block" @submit.prevent = 'followuser'>Follow</button>
                 </div>
+                
             </div>
         </div>
         
-        <div class="bttm">
+        <div class="bottom">
             <div class="imgupld">
-                {% for images in images %}
                 <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <img class="img-responsive" src=" {{url_for('static', filename= 'images/' + user.photo)}}" height="65" width="65" alt = "image upload" >
+                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
                 </div>
-                {% endfor %}
-            <div>
+            </div>
+            
+            <div class="imgupld">
+                <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
+                </div>
+            </div>
+            
+            <div class="imgupld">
+                <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
+                </div>
+            </div>
+            
+            <div class="imgupld">
+                <div class="col-lg-3 col-md-4 col-xs-6 thumb">
+                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
+                </div>
+            </div>
+            
         </div>
+        
     </div>
     `,
     data:function (){
         return {
-            token: token
+            user : {
+                username: "Acvp3lla",
+                firstname: "Luciano",
+                lastname: "Gordon",
+                location: "Ibiza, Spain",
+                joined_on: "12/4/2015",
+                bio: "Where my crown at?",
+                postCount: 22,
+                followers: 3,
+                profile_image: "/static/images/person-male.png"
+            },
+            counter:0
         };
+    },
+    methods:{
+        followuser: function(){
+            return '';
+        }
     }
-    
 });
 
 
