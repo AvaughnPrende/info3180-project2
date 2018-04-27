@@ -136,6 +136,7 @@ const loginForm = Vue.component('loginform',{
             }).then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     localStorage.setItem('token',jsonResonse.jwt_token);
+                    localStorage.setItem('current_user',jsonResonse.current_user);
                     self.response = jsonResonse.message;
                     console.log(self.response);
                     self.$router.push({path:'/explore'})
@@ -160,7 +161,7 @@ const uploadForm = Vue.component('uploadForm',{
             </div>
             <br>
             <div class="form-ish">
-                <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="uploadPhoto" name = 'form'>
+                <form id = 'uploadform' enctype = 'multipart/form-data' @submit.prevent="createNewPost" name = 'form'>
                 
                 <div class="form-group">
                     <label for="photo_upload" id="photo-upload_label"><h5>Photo</h5></label>
@@ -182,8 +183,41 @@ const uploadForm = Vue.component('uploadForm',{
     `,
     data:function (){
         return {
+            response:'',
+            errors:[]
         };
     },
+    methods:{
+        createNewPost: function(){
+            let self         = this;
+            let uploadform   = document.getElementById('uploadform');
+            let form_data    = new FormData(uploadform);
+            let current_user = localStorage.getItem('current_user');
+            
+            fetch('/api/users/1',{
+                method:'GET',
+                headers:{
+                    'X-CSRFToken':token,
+                    'Authorization':'Bearer ' + localStorage.getItem('token')
+                },
+                credentials: 'same-origin'
+            })
+            .then(function(response){
+                console.log(response);
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                if(jsonResonse.Errors == null){
+                    console.log(self.response);
+                    self.response = jsonResonse.message;
+                }
+                else{
+                    self.errors = jsonResonse.Errors;
+                    console.log(self.errors);
+                }
+            })
+        }
+    }
 });
 
 const signupForm = Vue.component('signupform',{

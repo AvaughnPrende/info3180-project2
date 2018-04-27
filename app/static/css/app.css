@@ -85,9 +85,10 @@ footer  {
 
 .platter {
     margin:auto;
-    border: solid 1px #af00ad;
+    border: solid 8px #af00ad;
     border-radius: 5px;
-    height: 
+    height: 800px
+    width: 60px;
     background: grey;
     font-family: 'Fjalla One', sans-serif;
 }

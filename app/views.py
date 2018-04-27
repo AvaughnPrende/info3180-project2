@@ -75,7 +75,7 @@ def login():
         else:
             user = users[0]
             jwt_token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
-            response = {'message': 'User successfully logged in','jwt_token':jwt_token}
+            response = {'message': 'User successfully logged in','jwt_token':jwt_token,'current_user':user.id}
             return jsonify(response)
     return jsonify_errors(form_errors(loginForm))
 
@@ -149,10 +149,11 @@ def get_user_details(current_user,user_id):
 @app.route('/api/users/<user_id>/posts',methods = ['POST'])
 @jwt_token_required
 def post(current_user,user_id):
-    """Creates post for currently logged in user with id <user_id>"""
+    """Creates a post for currently logged in user with id <user_id>"""
     form = Upload()
     user = User.query.filter_by(id = user_id).first()
     
+    print(user)
     if user == None:
         return jsonify({'error': 'This user does not exist'})
     
@@ -297,7 +298,6 @@ def form_errors(form):
                     error
                 )
             error_messages.append(message)
-
     return error_messages
     
 
