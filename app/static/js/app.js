@@ -162,12 +162,7 @@ const uploadForm = Vue.component('uploadForm',{
             </div>
             <br>
             <div class="form-ish">
-<<<<<<< HEAD
-                <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="createNewPost" name = 'uploadForm'>
-=======
-                <form id = 'uploadform' enctype = 'multipart/form-data' @submit.prevent="createNewPost" name = 'form'>
->>>>>>> 1b61d172ac35ac62bd6517e308ccdb860c503c14
-                
+                <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="createNewPost" name = 'uploadform'>
                 <div class="form-group">
                     <label for="photo_upload" id="photo-upload_label"><h5>Photo</h5></label>
                     <input id="photo" type="file" name="image">
@@ -195,12 +190,9 @@ const uploadForm = Vue.component('uploadForm',{
     methods:{
         createNewPost: function(){
             let self         = this;
-<<<<<<< HEAD
             let uploadform   = document.getElementById("uploadform");
             let form_data    = new FormData(uploadform);
             let current_user = localStorage.getItem('current_user');
-            
-
             
             fetch('/api/users/'+current_user+'/posts',{
                 method:  'POST',
@@ -212,47 +204,23 @@ const uploadForm = Vue.component('uploadForm',{
                         credentials: 'same-origin'
             })
             .then(function(response){
-=======
-            let uploadform   = document.getElementById('uploadform');
-            let form_data    = new FormData(uploadform);
-            let current_user = localStorage.getItem('current_user');
-            
-            fetch('/api/users/1',{
-                method:'GET',
-                headers:{
-                    'X-CSRFToken':token,
-                    'Authorization':'Bearer ' + localStorage.getItem('token')
-                },
-                credentials: 'same-origin'
-            })
-            .then(function(response){
-                console.log(response);
->>>>>>> 1b61d172ac35ac62bd6517e308ccdb860c503c14
                 return response.json();
             })
             .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
-<<<<<<< HEAD
-                    this.response = jsonResonse.message;
-                    this.$router.push({path:'explore'});
-                    console.log(this.response);
-                }
-                else{
-                    this.errors = jsonResonse.Errors;
-                    console.log(this.errors);
-=======
-                    console.log(self.response);
                     self.response = jsonResonse.message;
+                    self.$router.push({path:'/explore'});
+                    console.log(self.response);
                 }
                 else{
                     self.errors = jsonResonse.Errors;
                     console.log(self.errors);
->>>>>>> 1b61d172ac35ac62bd6517e308ccdb860c503c14
                 }
             })
         }
     }
 });
+
 
 const signupForm = Vue.component('signupform',{
     template:
@@ -351,8 +319,8 @@ const signupForm = Vue.component('signupform',{
             });
         }
     }
-    
 });
+
 
 const profile = Vue.component('profile',{
     template:
@@ -463,8 +431,6 @@ const explore = Vue.component('explore',{
     created:
         function(){
             let self       = this;
-            let signupform = document.getElementById("signupform");
-            let form_data  = new FormData(signupform);
             
             fetch('/api/posts',{
                 method:'GET',
@@ -478,11 +444,11 @@ const explore = Vue.component('explore',{
             }).then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.posts = jsonResonse.POSTS;
-                    console.log(self.posts);
+                    console.log(this.posts);
                 }
                 else{
                     self.errors = jsonResonse.Errors;
-                    console.log(self.errors);
+                    console.log(this.errors);
                 }
             })
         },

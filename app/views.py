@@ -151,21 +151,15 @@ def get_user_details(current_user,user_id):
 @app.route('/api/users/<user_id>/posts',methods = ['POST'])
 @jwt_token_required
 def post(current_user,user_id):
-<<<<<<< HEAD
     """Creates post for currently logged in user with id <user_id>"""
     uploadform = Upload()
     user = User.query.filter_by(id = user_id).first()
-
-=======
-    """Creates a post for currently logged in user with id <user_id>"""
-    form = Upload()
-    user = User.query.filter_by(id = user_id).first()
     
-    print(user)
->>>>>>> 1b61d172ac35ac62bd6517e308ccdb860c503c14
+    print('Image',uploadform.image.data)
+    print(uploadform.caption.data)
+    
     if user == None:
         return jsonify_errors(['User does not exist'])
-        
         
     if request.method == 'POST' and uploadform.validate_on_submit():
 
