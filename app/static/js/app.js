@@ -36,7 +36,12 @@ Vue.component('app-header', {
               </div>
             </nav>
         </header>    
-    `
+    `,
+    data: function() {
+            return {
+                
+            };
+        }
 });
 
 
@@ -349,18 +354,18 @@ const profile = Vue.component('profile',{
 const explore = Vue.component('explore',{
     template:
     `
+    
     <div class="platter">
-        
+        <div v-for = 'post in posts'>
         <div class="outerborder">
-            
             <div class="uname">
-                {{user.username}}
+                {{post.user_id}}
             </div>
             
             <div class="content">
             
                 <div class="imgpst">
-                    <img class="img-responsive" <!--src=" {{url_for('static', filename= 'images/' + user.photo)}}"--> height="275" width="275" alt = "image upload" >
+                    <img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >
                 </div>
             
                 <div class="btns">
@@ -371,22 +376,23 @@ const explore = Vue.component('explore',{
                         <button type="button"><img src="/static/images/comment.png" height="15px" width="15px" alt="like"></button>
                     </div>
                 </div>
-                
+            
                 <div>
-                    <p>{{user.description}}</p>
+                    <p>{{post.caption}}</p>
                 </div>
             </div>
-            
         </div>
-        
+        </div>
     </div>
     `,
     data:function (){
         return {
+            posts:[],
+            errors:[],
         }
     },
-    methods: {
-        exploreUsers: function(){
+    created:
+        function(){
             let self       = this;
             let signupform = document.getElementById("signupform");
             let form_data  = new FormData(signupform);
@@ -394,11 +400,23 @@ const explore = Vue.component('explore',{
             fetch('/api/posts',{
                 method:'GET',
                 body:{},
-                
+                headers:{
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                }
+            }).then(function(response){
+                return response.json()
+            }).then(function(jsonResonse){
+                if(jsonResonse.Errors == null){
+                    self.posts = jsonResonse.POSTS;
+                    console.log(self.posts);
+                }
+                else{
+                    self.errors = jsonResonse.Errors;
+                    console.log(self.errors);
+                }
             })
         }
-    }
-    
 });
 
 // Define Routes
@@ -407,8 +425,8 @@ const router = new VueRouter({
         { path: "/",           component: Home },
         { path: "/loginform",  component: loginForm},
         { path: "/register",   component: signupForm},
-        { path: "/uploadForm",   component: uploadForm},
-        { path: "/profile",   component: profile},
+        { path: "/uploadForm", component: uploadForm},
+        { path: "/profile",    component: profile},
         { path: "/explore",   component: explore}
     ]
 });
