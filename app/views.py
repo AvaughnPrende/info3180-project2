@@ -86,17 +86,23 @@ def logout(current_user):
 @app.route('/api/users/register', methods = ['POST', 'GET'])
 def register():
     signForm = SignUpForm()
+    print(signForm.photo)
     
     if request.method == 'POST' and signForm.validate_on_submit():
+        
+        users_with_username = User.query.filter_by(username = signForm.username.data).all()
+        if len(users_with_username) >0:
+            return jsonify_errors(['Username unavailable'])
+            
         firstname       = signForm.firstname.data
         lastname        = signForm.lastname.data
         username        = signForm.username.data
         hashed_password = generate_password_hash(signForm.password.data)
         location        = signForm.location.data
         email           = signForm.email.data
-        bio             = signForm.bio.data
+        bio             = signForm.biography.data
         
-        photo    = request.files['image']
+        photo    = request.files['photo']
         filename = secure_filename(photo.filename)
         photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         

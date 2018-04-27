@@ -166,7 +166,7 @@ const signupForm = Vue.component('signupform',{
                 <img src="/static/images/logo.png" height="48px" width="120px" alt="Logo">
                 <p>Let the world know of your presence.</p>
             </div>
-            <form action="" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
+            <form @submit.prevent="RegisterUser" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
                 <div class="form-group">
                     <label   for = 'username' id = 'username_label'> <h5>Username</h5> </label>
                     <input class = 'form-control' id = 'username' type = 'text' name = 'username' rows = '5' placeholder="Enter Username">
@@ -213,7 +213,46 @@ const signupForm = Vue.component('signupform',{
             </form>
         </div>
     </div>
-    `
+    `,
+    data: function(){
+        return {
+            response:{},
+            errors:[]
+        }
+    },
+    methods: {
+        RegisterUser: function(){
+            let self       = this;
+            let signupform = document.getElementById("signupform");
+            let form_data  = new FormData(signupform);
+
+            
+            fetch('/api/users/register',{
+                method:  'POST',
+                body: form_data,
+                headers: {
+                        'X-CSRFToken': token
+                         },
+                        credentials: 'same-origin'
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                if(jsonResonse.Errors == null){
+                    self.response = jsonResonse;
+                    self.$router.push({path:'/loginform'})
+                    //Maybe some kind of success message goes here
+                    console.log(jsonResonse);
+                }
+                else{
+                    console.log(jsonResonse);
+                    this.errors = jsonResonse.Errors;
+                }
+            });
+        }
+    }
+    
 });
 
 const profile = Vue.component('profile',{

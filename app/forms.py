@@ -15,8 +15,8 @@ class SignUpForm(FlaskForm):
     password  = PasswordField('Password', validators=[InputRequired()])
     location  = StringField("Location",[validators.Required("(Required)")])
     email     = StringField("Email",[validators.Required("(Required)"), validators.Email("(Required)")])
-    bio       = TextAreaField('Bio', validators=[InputRequired()])
-    image     = FileField('Profile Picture', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'Images only!'])])
+    biography = TextAreaField('Bio', validators=[InputRequired()])
+    photo     = FileField('Profile Picture', validators=[FileRequired(), FileAllowed(['jpg', 'png', 'Images only!'])])
     
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
