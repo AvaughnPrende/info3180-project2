@@ -50,7 +50,7 @@ def jwt_token_required(fn):
     return decorated
 
 
-@app.route("/api/auth/login", methods=["GET", "POST"])
+@app.route("/api/auth/login", methods=["POST"])
 def login():
     loginForm = LoginForm()
     
@@ -61,9 +61,9 @@ def login():
         users    = User.query.filter_by(username=username).all()
         
         if len(users) == 0:
-            return jsonify({'error': 'Invalid username or password'})
+            return jsonify_errors(['Invalid username or password'])
         elif not check_password_hash(users[0].password,password):
-            return jsonify({'error': 'Invalid username or password'})
+            return jsonify_errors(['Invalid username or password'])
         else:
             user = users[0]
             jwt_token  = jwt.encode({'user': user.username},app.config['SECRET_KEY'],algorithm = 'HS256')
@@ -81,7 +81,7 @@ def logout(current_user):
     return jsonify_errors(['Only GET requests are accepted'])
 
 
-#----------------------Users Reoutes----------------------
+#-------------------------Users Reoutes-------------------------
 
 @app.route('/api/users/register', methods = ['POST', 'GET'])
 def register():

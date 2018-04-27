@@ -90,9 +90,8 @@ const loginForm = Vue.component('loginform',{
                 <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
             <br>
-            {{token}}
             <div class="form-ish">
-                <form action="" method="post" name = 'login_form' id = 'loginform'>
+                <form  @submit.prevent="loginUser" methos = 'post' name = 'login_form' id = 'loginform'>
                 <div class="form-group">
                     <label   for = 'username'     id = 'username_label'><h5>Username:</h5></label>
                     <input class = 'form-control' id = 'username' type = 'text' name = 'username' rows = '5' placeholder="Enter Username" >
@@ -112,11 +111,39 @@ const loginForm = Vue.component('loginform',{
     `,
     data:function (){
         return {
-            token: token
         };
+    },
+    methods:{
+        loginUser: function(){
+            let self       = this;
+            let loginform  = document.getElementById("loginform");
+            let form_data  = new FormData(loginform);
+            
+            fetch('/api/auth/login',{
+                method:'POST',
+                body:form_data,
+                headers:{
+                        'X-CSRFToken': token
+                         },
+                        credentials: 'same-origin'
+            }).then(function(response){
+                return response.json();
+            }).then(function(jsonResonse){
+                if(jsonResonse.Errors == null){
+                    localStorage.setItem('token',jsonResonse.jwt_token);
+                    self.response = jsonResonse.message;
+                    console.log(self.response);
+                    self.$router.push({path:'/explore'})
+                }
+                else{
+                    self.errors = jsonResonse.Errors;
+                    console.log(self.errors)
+                }
+            })
+        }
     }
-    
 });
+
 
 const uploadForm = Vue.component('uploadForm',{
     template:
@@ -124,12 +151,11 @@ const uploadForm = Vue.component('uploadForm',{
     <div class="upcont">
         <div class="upload-form">
             <div class="head">
-            <h2>Upload</h2>
+                <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
             <br>
-            {{token}}
             <div class="form-ish">
-                <form action="" method="post" name = 'upload_form' id = 'uploadform'>
+                <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="uploadPhoto" name = 'form'>
                 
                 <div class="form-group">
                     <label for="photo_upload" id="photo-upload_label"><h5>Photo</h5></label>
@@ -151,10 +177,8 @@ const uploadForm = Vue.component('uploadForm',{
     `,
     data:function (){
         return {
-            token: token
         };
-    }
-    
+    },
 });
 
 const signupForm = Vue.component('signupform',{
@@ -164,8 +188,9 @@ const signupForm = Vue.component('signupform',{
         <div id = 'register-page'>
             <div class="head">
                 <img src="/static/images/logo.png" height="48px" width="120px" alt="Logo">
-                <p>Let the world know of your presence.</p>
+                <p>Let the world see the best you.</p>
             </div>
+            
             <form @submit.prevent="RegisterUser" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
                 <div class="form-group">
                     <label   for = 'username' id = 'username_label'> <h5>Username</h5> </label>
@@ -335,7 +360,7 @@ const explore = Vue.component('explore',{
             <div class="content">
             
                 <div class="imgpst">
-                    <img class="img-responsive" src=" {{url_for('static', filename= 'images/' + user.photo)}}" height="275" width="275" alt = "image upload" >
+                    <img class="img-responsive" <!--src=" {{url_for('static', filename= 'images/' + user.photo)}}"--> height="275" width="275" alt = "image upload" >
                 </div>
             
                 <div class="btns">
@@ -358,8 +383,20 @@ const explore = Vue.component('explore',{
     `,
     data:function (){
         return {
-            token: token
-        };
+        }
+    },
+    methods: {
+        exploreUsers: function(){
+            let self       = this;
+            let signupform = document.getElementById("signupform");
+            let form_data  = new FormData(signupform);
+            
+            fetch('/api/posts',{
+                method:'GET',
+                body:{},
+                
+            })
+        }
     }
     
 });

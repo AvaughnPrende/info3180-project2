@@ -10,6 +10,8 @@ footer  {
 
 .bg-nav{
     background: linear-gradient(to right, #ff4264 , #af00ad);
+    font-family: 'Fjalla One', sans-serif;
+    font-weight: bold;
 }
 
 .fcont {
@@ -45,6 +47,8 @@ footer  {
 .head{
     padding-top: 20px;
     text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bold;
 }
 
 .containment-box{
@@ -74,7 +78,7 @@ footer  {
     border: solid 0px #af00ad;
     border-radius: 5px;
     width: 380px;
-    height: 430px;
+    height: 440px;
     background: linear-gradient(to right, #ff4264 , #af00ad);
     font-family: 'Fjalla One', sans-serif;
 }
@@ -83,6 +87,7 @@ footer  {
     margin:auto;
     border: solid 1px #af00ad;
     border-radius: 5px;
+    height: 
     background: grey;
     font-family: 'Fjalla One', sans-serif;
 }
