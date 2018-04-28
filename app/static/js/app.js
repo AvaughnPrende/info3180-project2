@@ -413,7 +413,7 @@ const profile = Vue.component('profile',{
                     </div>
                 </div>
                 
-                <div class="btn">
+                <div class="btn" v-if = '!(current_user == user.id)'>
                     <button type="button" class="btn btn-primary btn-block" @submit.prevent = 'followuser'>Follow</button>
                 </div>
                 
@@ -435,7 +435,8 @@ const profile = Vue.component('profile',{
         return {
             user : {},
             posts: [],
-            followers:0
+            followers:0,
+            current_user:localStorage.getItem('current_user')
         };
     },
     
