@@ -25,13 +25,13 @@ Vue.component('app-header', {
                     <router-link class="nav-link" to="/explore">Explore<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" :to="'/users/' + current_user" v-if = 'userLoggedIn'>Profile<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" :to="'/users/' + current_user" v-if = 'userLoggedIn'>My Profile<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/uploadForm" v-if = 'userLoggedIn'>Upload<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/posts/new" v-if = 'userLoggedIn'>New Post<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/loginform" v-if  = '!userLoggedIn'>Login<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/login" v-if  = '!userLoggedIn'>Login<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
                     <router-link class="nav-link" to="/register" v-if   = '!userLoggedIn'>Sign Up<span class="sr-only">(current)</span></router-link>
@@ -78,7 +78,7 @@ const Home = Vue.component('home', {
             <!--App Tagline/Catch Phrase-->
             <p>{{ welcome }}</p>
             <router-link class="btn btn-success col-md-5" to="/register">Register</router-link>
-            <router-link class="btn btn-primary col-md-5" to="/loginform">Login</router-link>
+            <router-link class="btn btn-primary col-md-5" to="/login">Login</router-link>
         </div>
         
     </div>   
@@ -115,7 +115,7 @@ Vue.component('app-footer', {
 });
 
 
-const loginForm = Vue.component('loginform',{
+const loginForm = Vue.component('login',{
     template:
     `
     <div class="fcont">
@@ -352,7 +352,7 @@ const signupForm = Vue.component('signupform',{
             .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse;
-                    self.$router.push({path:'/loginform'})
+                    self.$router.push({path:'/login'})
 
                     console.log(jsonResonse);
                 }
@@ -581,9 +581,9 @@ let logout = Vue.component('logout',{
 const router = new VueRouter({
     routes: [
         { path: "/",                component: Home },
-        { path: "/loginform",       component: loginForm},
+        { path: "/login",       component: loginForm},
         { path: "/register",        component: signupForm},
-        { path: "/uploadForm",      component: uploadForm},
+        { path: "/posts/new",      component: uploadForm},
         { path: "/users/:user_id",  component: profile,name:'user'},
         { path: "/explore",         component: explore},
         { path: "/logout",          component: logout}
