@@ -52,7 +52,7 @@ Vue.component('app-header', {
         created:
             function(){
                 this.current_user = localStorage.getItem('current_user');
-                console.log("Logged in: " + this.userLoggedIn);
+                //console.log("Logged in: " + this.userLoggedIn);
                 bus.$on('logged', () => {
                 this.userLoggedIn = this.isLoggedIn();
             });
@@ -91,7 +91,7 @@ const Home = Vue.component('home', {
         watch:{
             '$route' (to, from){
                 let user_id = to.params.user_id;
-                console.log(to);
+                //console.log(to);
                 this.$router.go(to);
             }
         }
@@ -182,7 +182,7 @@ const loginForm = Vue.component('login',{
     watch:{
         '$route' (to, from){
             let user_id = to.params.user_id;
-            console.log(to);
+            //console.log(to);
             this.$router.go(to);
             }
         }
@@ -247,7 +247,7 @@ const uploadForm = Vue.component('uploadForm',{
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse.message;
                     self.$router.push({path:'/explore'});
-                    console.log(self.response);
+                    //console.log(self.response);
                 }
                 else{
                     self.errors = jsonResonse.Errors;
@@ -259,7 +259,7 @@ const uploadForm = Vue.component('uploadForm',{
     watch:{
         '$route' (to, from){
             let user_id = to.params.user_id;
-            console.log(to);
+            //console.log(to);
             this.$router.go(to);
             }
         }
@@ -366,7 +366,7 @@ const signupForm = Vue.component('signupform',{
     watch:{
         '$route' (to, from){
         let user_id = to.params.user_id;
-        console.log(to);
+        //console.log(to);
         this.$router.go(to);
             }
         }
@@ -392,7 +392,7 @@ const profile = Vue.component('profile',{
                     </div>
                     <div class="locndate">
                         <p>{{ user.location }} </p>
-                        <p><label>Joined:</label>{{user.joined_on }}</p>
+                        <p><label>Member since </label> {{user.joined_on}}</p>
                     </div>
                     <div class="bio">
                         <p>{{ user.bio }}</p>
@@ -463,7 +463,7 @@ const profile = Vue.component('profile',{
             })
             .then(function(jsonResonse){
                 self.response = jsonResonse.message;
-                console.log(jsonResonse);
+                //console.log(jsonResonse);
                 
                 if(jsonResonse.newRelationship == 'true'){
                     fetch('/api/users/' + self.$route.params.user_id + '/follow',{
@@ -481,7 +481,7 @@ const profile = Vue.component('profile',{
                         self.followers = jsonResonse.followers;
                         $('#follow').css('background-color','green');
                         $('#follow').text('Following');
-                        console.log(jsonResonse)
+                        //console.log(jsonResonse)
                     })
                 }
             })
@@ -506,10 +506,9 @@ const profile = Vue.component('profile',{
                 self.user      = jsonResonse.User;
                 self.posts     = jsonResonse.Posts;
                 self.followers = self.user.number_of_followers;
-                console.log(jsonResonse)
-            })
-            
-            fetch('/api/users/' + self.$route.params.user_id + '/following',{
+                //console.log(jsonResonse)
+            }).then(function(){
+                fetch('/api/users/' + self.$route.params.user_id + '/following',{
                 method:'GET',
                 body:{},
                 headers:{
@@ -526,13 +525,14 @@ const profile = Vue.component('profile',{
                     $('#follow').css('background-color','green');
                     $('#follow').text('Following');
                 }
-                console.log(jsonResonse);
+                //console.log(jsonResonse);
+            })
             })
         },
         watch:{
             '$route' (to, from){
                 let user_id = to.params.user_id;
-                console.log(to);
+                //console.log(to);
                 this.$router.go(to);
             }
         }
@@ -597,7 +597,7 @@ const explore = Vue.component('explore',{
                 }
                 else{
                     self.errors = jsonResonse.Errors;
-                    console.log(this.errors);
+                    //console.log(this.errors);
                 }
             });
         },
@@ -640,7 +640,6 @@ let logout = Vue.component('logout',{
                 location.reload();
             })
         }
-    
 })
 
 // Define Routes

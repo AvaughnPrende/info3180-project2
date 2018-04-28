@@ -9,8 +9,8 @@ import pytz
 def current_date():
     """Returns current date formatted as 'Month Day, Year' """
     jamaica = pytz.timezone("America/Jamaica")
-    date    = datetime.now(jamaica).strftime("%B %d, %Y")
+    date    = datetime.now(jamaica)
     return date
-
+    
 
 

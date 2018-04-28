@@ -144,8 +144,8 @@ def get_user_details(current_user,user_id):
     if request.method == 'GET':
         posts = Post.query.filter_by(userid = user.id)
         number_of_followers = Follow.query.filter_by(userid = user.id).count()
-        
         user_data = dictify(user)
+        user_data['joined_on'] = user_data['joined_on'].strftime("%B %d, %Y")
         del user_data['password']
         user_data['number_of_followers'] = number_of_followers
         posts = [post.photo for post in posts]
