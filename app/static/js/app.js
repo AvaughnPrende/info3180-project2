@@ -479,7 +479,7 @@ const explore = Vue.component('explore',{
     <div class="platter">
         <div v-for = 'post in posts.reverse()'>
         <div class="outerborder">
-            <div class="uname">
+            <div id = 'username' class="uname" @click = 'goToUserPage' :user_id = post.userid>
                 {{post.username}}
             </div>
             
@@ -528,7 +528,6 @@ const explore = Vue.component('explore',{
             }).then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.posts = jsonResonse.POSTS;
-                    console.log(this.posts);
                 }
                 else{
                     self.errors = jsonResonse.Errors;
@@ -541,6 +540,12 @@ const explore = Vue.component('explore',{
             let user_id = to.params.user_id;
             console.log(to);
             this.$router.go(to);
+            }
+        },
+        methods:{
+            goToUserPage: function(event){
+                user_id = $(event.target).attr('user_id');
+                this.$router.push({name:'user',params:{'user_id':user_id}});
             }
         }
 });
@@ -579,7 +584,7 @@ const router = new VueRouter({
         { path: "/loginform",       component: loginForm},
         { path: "/register",        component: signupForm},
         { path: "/uploadForm",      component: uploadForm},
-        { path: "/users/:user_id",  component: profile},
+        { path: "/users/:user_id",  component: profile,name:'user'},
         { path: "/explore",         component: explore},
         { path: "/logout",          component: logout}
     ]
