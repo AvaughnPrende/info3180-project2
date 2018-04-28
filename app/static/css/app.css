@@ -140,17 +140,6 @@ footer  {
     background: white;
     
 }
-
-.platter {
-    margin:auto;
-    border: solid 8px #f9f9f9;
-    border-radius: 5px;
-    height: 1000px;
-    background: #f9f9f9;
-    font-family: 'Fjalla One', sans-serif;
-    position: relative;
-}
-
 .outerborder {
     border: solid 4px #af00ad;
     border-radius: 5px;
@@ -161,4 +150,51 @@ footer  {
 .imgupld{
     margin-top: 20px;
     margin-bottom: 20px;
+}
+
+.platter {
+    margin:auto;
+    border: solid 8px #ededed;
+    border-radius: 5px;
+    height: auto;
+    width: 70%;
+    background: #ededed;
+    font-family: 'Fjalla One', sans-serif;
+    position: relative;
+}
+
+.outerborder{
+    margin:auto;
+    margin-top: 20px;
+    width: 80%;
+    border: solid 8px white;
+}
+
+.content{
+    margin:auto;
+    width: 70%;
+}
+
+.imgpst{
+    text-align: center;
+}
+
+.btns{
+    display: grid;
+    grid-template-columns: repeat(2,.1fr);
+    position: relative;
+    
+}
+
+.pbtn{
+    text-decoration: none;
+}
+
+.capt{
+    font-family: 'Fjalla One', sans-serif;
+}
+
+.uname {
+    font-family: 'Fjalla One', sans-serif;
+    font-weight: bold;
 }

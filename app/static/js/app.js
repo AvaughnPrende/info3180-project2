@@ -6,7 +6,7 @@ Vue.component('app-header', {
             <nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top">
               <router-link class="nav-link" to="/"><img src="/static/images/logo.png" height="48px" width="120px" alt="Logo"></router-link>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+                  <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
@@ -16,22 +16,25 @@ Vue.component('app-header', {
                 
                 <ul class="navbar-nav">
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/">Home<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/" v-if = '!userLoggedIn'>Home<span class="sr-only">(current)</span></router-link>
                 </li>
-                <li class="nav-item active">
+                <li class="nav-item active" v-if = 'userLoggedIn'>
                     <router-link class="nav-link" to="/explore">Explore<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" :to="'/users/' + current_user">Profile<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" :to="'/users/' + current_user" v-if = 'userLoggedIn'>Profile<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/uploadForm">Upload<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/uploadForm" v-if = 'userLoggedIn'>Upload<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/loginform">Login<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/loginform" v-if = '!userLoggedIn'>Login<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/register">Sign Up<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/register" v-if = '!userLoggedIn'>Sign Up<span class="sr-only">(current)</span></router-link>
+                </li>
+                <li class="nav-item active">
+                    <router-link class="nav-link" to="/logout" v-if = 'userLoggedIn'>Logout<span class="sr-only">(current)</span></router-link>
                 </li>
                 </ul>
               </div>
@@ -40,19 +43,29 @@ Vue.component('app-header', {
     `,
     data: function() {
             return {
+                loggedIn:false
             };
         },
         methods:{
-            goToProfile: function(){
-                console.log('somr')
-                return '1';
+            userLoggedIn: function(){
+                return !(localStorage.getItem('token')== null && localStorage.getItem('current_user')==null)
             }
         },
         created:
             function(){
                 this.current_user = localStorage.getItem('current_user');
                 console.log(this.current_user)
+                console.log(this.userLoggedIn());
+            },
+            watch:{
+                loggedIn:function(){
+                    console.log('watch')
+                    if(localStorage.getItem('token')== null && localStorage.getItem('current_user')==null){
+                        console.log('Its good');
+                    }
+                }
             }
+        
 });
 
 
@@ -467,7 +480,7 @@ const explore = Vue.component('explore',{
     template:
     `
     <div class="platter">
-        <div v-for = 'post in posts.reverse()'>
+        <!--<div v-for = 'post in posts.reverse()'>-->
         <div class="outerborder">
             <div class="uname">
                 {{post.user_id}}
@@ -476,31 +489,38 @@ const explore = Vue.component('explore',{
             <div class="content">
             
                 <div class="imgpst">
-                    <img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >
+                    <!--<img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >-->
+                    <img src="/static/images/4.jpg" height="400px" width="400px" alt="post">
                 </div>
             
                 <div class="btns">
                     <div class="likebtn">
-                        <button type="button"><img src="/static/images/like.png" height="15px" width="15px" alt="like"></button>
+                        <button id="pbtn" class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
                     </div>
                     <div class="comntbtn">
-                        <button type="button"><img src="/static/images/comment.png" height="15px" width="15px" alt="like"></button>
+                        <button id="pbtn" class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/comment.png" height="25px" width="25px" alt="like"></button>
                     </div>
                 </div>
             
-                <div>
+                <div class="capt">
                     <p>{{post.caption}}</p>
                 </div>
             </div>
         </div>
-        </div>
+        <!--</div>-->
     </div>
     `,
     data:function (){
         return {
-            posts:[],
-            errors:[],
-        }
+            post:{
+                user_id: '12121',
+                caption: "Friday Night Lights."
+            }
+            
+            
+            //posts:[],
+            //errors:[],
+        };
     },
     created:
         function(){
@@ -514,7 +534,7 @@ const explore = Vue.component('explore',{
                     'Authorization': 'Bearer '  + localStorage.getItem('token')
                 }
             }).then(function(response){
-                return response.json()
+                return response.json();
             }).then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.posts = jsonResonse.POSTS;
@@ -524,7 +544,7 @@ const explore = Vue.component('explore',{
                     self.errors = jsonResonse.Errors;
                     console.log(this.errors);
                 }
-            })
+            });
         },
         watch:{
             '$route' (to, from){
@@ -535,15 +555,43 @@ const explore = Vue.component('explore',{
         }
 });
 
+let logout = Vue.component('logout',{
+    template:"<html></html>",
+    data:"",
+    mounted:
+        function(){
+            console.log('pressed')
+            let self = this;
+            fetch('/api/auth/logout',{
+                method:'GET',
+                body:{},
+                headers:{
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                }
+            })
+            .then(function(response){
+                return response.json()
+            })
+            .then(function(jsonResonse){
+                self.response = jsonResonse.message;
+                localStorage.clear();
+                self.$router.push({path:'/'});   
+            })
+        }
+    
+})
+
 // Define Routes
 const router = new VueRouter({
     routes: [
-        { path: "/",                    component: Home },
-        { path: "/loginform",           component: loginForm},
-        { path: "/register",            component: signupForm},
-        { path: "/uploadForm",          component: uploadForm},
-        { path: "/users/:user_id",     component: profile,name:'profile'},
-        { path: "/explore",             component: explore}
+        { path: "/",                component: Home },
+        { path: "/loginform",       component: loginForm},
+        { path: "/register",        component: signupForm},
+        { path: "/uploadForm",      component: uploadForm},
+        { path: "/users/:user_id",  component: profile,name:'profile'},
+        { path: "/explore",         component: explore},
+        { path: "/logout",          component: logout}
     ]
 });
 
