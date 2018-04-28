@@ -207,6 +207,10 @@ def get_all_posts():
     if request.method == 'GET':
         all_posts         = Post.query.all()
         list_of_all_posts = [dictify(post) for post in all_posts]
+        
+        for post in list_of_all_posts:
+            username = User.query.filter_by(id = post['userid']).first().username
+            post['username'] = username
         return jsonify({'POSTS':list_of_all_posts})
     return jsonify_errors(['Only GET requests are accepted'])
     
@@ -225,7 +229,7 @@ def follow_user(current_user,user_id):
     
     if request.method == 'POST':
         user_id             = request.values.get('user_id')
-        follower_id         = request.values.get('follower_id')
+        follower_id         = current_user.id
         follow_relationship = Follow(follower_id=follower_id,userid=user_id)
         db.session.add(follow_relationship)
         db.session.commit()

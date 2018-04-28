@@ -477,17 +477,16 @@ const explore = Vue.component('explore',{
     template:
     `
     <div class="platter">
-        <!--<div v-for = 'post in posts.reverse()'>-->
+        <div v-for = 'post in posts.reverse()'>
         <div class="outerborder">
             <div class="uname">
-                {{post.user_id}}
+                {{post.username}}
             </div>
             
             <div class="content">
             
                 <div class="imgpst">
-                    <!--<img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >-->
-                    <img src="/static/images/4.jpg" height="400px" width="400px" alt="post">
+                    <img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >
                 </div>
             
                 <div class="btns">
@@ -504,24 +503,18 @@ const explore = Vue.component('explore',{
                 </div>
             </div>
         </div>
-        <!--</div>-->
+        </div>
     </div>
     `,
     data:function (){
         return {
-            post:{
-                user_id: '12121',
-                caption: "Friday Night Lights."
-            }
-            
-            
-            //posts:[],
-            //errors:[],
+            posts:[],
+            errors:[],
         };
     },
     created:
         function(){
-            let self       = this;
+            let self = this;
             
             fetch('/api/posts',{
                 method:'GET',
@@ -553,7 +546,7 @@ const explore = Vue.component('explore',{
 });
 
 let logout = Vue.component('logout',{
-    template:"",
+    template:"<html></html>",
     data:"",
     created:
         function(){
@@ -572,7 +565,7 @@ let logout = Vue.component('logout',{
             .then(function(jsonResonse){
                 self.response = jsonResonse.message;
                 localStorage.clear();
-                self.$router.push({path:'/'}); 
+                self.$router.push('/');
                 location.reload();
             })
         }
@@ -586,7 +579,7 @@ const router = new VueRouter({
         { path: "/loginform",       component: loginForm},
         { path: "/register",        component: signupForm},
         { path: "/uploadForm",      component: uploadForm},
-        { path: "/users/:user_id",  component: profile,name:'profile'},
+        { path: "/users/:user_id",  component: profile},
         { path: "/explore",         component: explore},
         { path: "/logout",          component: logout}
     ]
