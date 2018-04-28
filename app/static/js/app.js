@@ -1,5 +1,8 @@
 /* Add your Application JavaScript */
-localStorage.setItem('csrf',token);
+
+bus = new Vue();
+
+
 Vue.component('app-header', {
     template: `
         <header>
@@ -28,10 +31,10 @@ Vue.component('app-header', {
                     <router-link class="nav-link" to="/uploadForm" v-if = 'userLoggedIn'>Upload<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/loginform" v-if = '!userLoggedIn'>Login<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/loginform" v-if  = '!userLoggedIn'>Login<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/register" v-if = '!userLoggedIn'>Sign Up<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" to="/register" v-if   = '!userLoggedIn'>Sign Up<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
                     <router-link class="nav-link" to="/logout" v-if = 'userLoggedIn'>Logout<span class="sr-only">(current)</span></router-link>
@@ -43,29 +46,22 @@ Vue.component('app-header', {
     `,
     data: function() {
             return {
-                loggedIn:false
+                userLoggedIn:this.isLoggedIn()
             };
-        },
-        methods:{
-            userLoggedIn: function(){
-                return !(localStorage.getItem('token')== null && localStorage.getItem('current_user')==null)
-            }
         },
         created:
             function(){
                 this.current_user = localStorage.getItem('current_user');
-                console.log(this.current_user)
-                console.log(this.userLoggedIn());
+                console.log("Logged in: " + this.userLoggedIn);
+                bus.$on('logged', () => {
+                this.userLoggedIn = this.isLoggedIn();
+            });
             },
-            watch:{
-                loggedIn:function(){
-                    console.log('watch')
-                    if(localStorage.getItem('token')== null && localStorage.getItem('current_user')==null){
-                        console.log('Its good');
-                    }
+        methods:{
+                isLoggedIn: function(){
+                    return !(localStorage.getItem('token')==null);
                 }
             }
-        
 });
 
 
@@ -171,8 +167,10 @@ const loginForm = Vue.component('loginform',{
                     localStorage.setItem('token',jsonResonse.jwt_token);
                     localStorage.setItem('current_user',jsonResonse.current_user);
                     self.response = jsonResonse.message;
+                    bus.$emit('loggedIn');
                     console.log(self.response);
                     self.$router.push({path:'/explore'})
+                    location.reload();
                 }
                 else{
                     self.errors = jsonResonse.Errors;
@@ -355,7 +353,7 @@ const signupForm = Vue.component('signupform',{
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse;
                     self.$router.push({path:'/loginform'})
-                    //Maybe some kind of success message goes here
+
                     console.log(jsonResonse);
                 }
                 else{
@@ -472,7 +470,6 @@ const profile = Vue.component('profile',{
                 this.$router.go(to);
             }
         }
-        
 });
 
 
@@ -556,11 +553,10 @@ const explore = Vue.component('explore',{
 });
 
 let logout = Vue.component('logout',{
-    template:"<html></html>",
+    template:"",
     data:"",
-    mounted:
+    created:
         function(){
-            console.log('pressed')
             let self = this;
             fetch('/api/auth/logout',{
                 method:'GET',
@@ -576,7 +572,8 @@ let logout = Vue.component('logout',{
             .then(function(jsonResonse){
                 self.response = jsonResonse.message;
                 localStorage.clear();
-                self.$router.push({path:'/'});   
+                self.$router.push({path:'/'}); 
+                location.reload();
             })
         }
     
