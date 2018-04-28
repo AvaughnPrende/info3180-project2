@@ -137,17 +137,20 @@ def get_user_details(current_user,user_id):
     """
     print('here')
     user = User.query.filter_by(id = user_id).first()
-    print(user)
+
     if user == None:
         return jsonify_errors(['User does not exist'])
     
     if request.method == 'GET':
+        posts = Post.query.filter_by(userid = user.id)
+        number_of_followers = Follow.query.filter_by(userid = user.id).count()
+        
         user_data = dictify(user)
         del user_data['password']
-        posts = Post.query.filter_by(user_id = user.id)
-        images = [post.image for post in posts]
-        print(images)
-        return jsonify([user_data,images])
+        user_data['number_of_followers'] = number_of_followers
+        posts = [post.photo for post in posts]
+        return jsonify({'User':user_data,'Posts':posts})
+        
     return jsonify_errors(['Only GET requests are accepted'])
     
     

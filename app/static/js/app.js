@@ -22,7 +22,7 @@ Vue.component('app-header', {
                     <router-link class="nav-link" to="/explore">Explore<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
-                    <router-link class="nav-link" to="/profile">Profile<span class="sr-only">(current)</span></router-link>
+                    <router-link class="nav-link" :to="'/users/' + current_user">Profile<span class="sr-only">(current)</span></router-link>
                 </li>
                 <li class="nav-item active">
                     <router-link class="nav-link" to="/uploadForm">Upload<span class="sr-only">(current)</span></router-link>
@@ -40,9 +40,19 @@ Vue.component('app-header', {
     `,
     data: function() {
             return {
-                
             };
-        }
+        },
+        methods:{
+            goToProfile: function(){
+                console.log('somr')
+                return '1';
+            }
+        },
+        created:
+            function(){
+                this.current_user = localStorage.getItem('current_user');
+                console.log(this.current_user)
+            }
 });
 
 
@@ -68,6 +78,13 @@ const Home = Vue.component('home', {
             return {
                 welcome: 'Let the World See the Best You.'
             };
+        },
+        watch:{
+            '$route' (to, from){
+                let user_id = to.params.user_id;
+                console.log(to);
+                this.$router.go(to);
+            }
         }
 });
 
@@ -87,7 +104,6 @@ Vue.component('app-footer', {
         };
     }
 });
-
 
 
 const loginForm = Vue.component('loginform',{
@@ -151,7 +167,14 @@ const loginForm = Vue.component('loginform',{
                 }
             })
         }
-    }
+    },
+    watch:{
+        '$route' (to, from){
+            let user_id = to.params.user_id;
+            console.log(to);
+            this.$router.go(to);
+            }
+        }
 });
 
 
@@ -221,7 +244,14 @@ const uploadForm = Vue.component('uploadForm',{
                 }
             })
         }
-    }
+    },
+    watch:{
+        '$route' (to, from){
+            let user_id = to.params.user_id;
+            console.log(to);
+            this.$router.go(to);
+            }
+        }
 });
 
 
@@ -321,7 +351,14 @@ const signupForm = Vue.component('signupform',{
                 }
             });
         }
-    }
+    },
+    watch:{
+        '$route' (to, from){
+        let user_id = to.params.user_id;
+        console.log(to);
+        this.$router.go(to);
+            }
+        }
 });
 
 
@@ -333,8 +370,7 @@ const profile = Vue.component('profile',{
         <div class="top">
             <div class="top-right">
                 <div class="propic">
-                    <!--<img :src=""></img>-->
-                    <img src="/static/images/person-male.png" height="200px" width="200px" alt="Logo">
+                    <img :src="'/static/images/' + user.profile_photo" height="200px" width="200px" alt="Logo">
                 </div>
                 <div class="userdeets">
                     <div class="uname">
@@ -357,11 +393,11 @@ const profile = Vue.component('profile',{
             
                 <div class="count">
                     <div class="posts">
-                        <h5>{{ user.postCount }}</h5>
+                        <h5>{{ posts.length }}</h5>
                         <h6>Posts</h6>
                     </div>
                     <div class="folrs">
-                        <h5>{{ user.followers }}</h5> <!-- ignore for now {{ counter }} -->
+                        <h5>{{ followers }}</h5> <!-- ignore for now {{ counter }} -->
                         <h6>Followers</h6>
                     </div>
                 </div>
@@ -374,27 +410,9 @@ const profile = Vue.component('profile',{
         </div>
         
         <div class="bottom">
-            <div class="imgupld">
+            <div class="imgupld" v-for = 'post in posts'>
                 <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
-                </div>
-            </div>
-            
-            <div class="imgupld">
-                <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
-                </div>
-            </div>
-            
-            <div class="imgupld">
-                <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
-                </div>
-            </div>
-            
-            <div class="imgupld">
-                <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                    <img class="img-responsive" src="/static/images/20170909_201041.jpg" height="240" width="240" alt = "image upload" >
+                    <img class="img-responsive" :src="'/static/images/' + post" height="240" width="240" alt = "image upload" >
                 </div>
             </div>
             
@@ -404,32 +422,50 @@ const profile = Vue.component('profile',{
     `,
     data:function (){
         return {
-            user : {
-                username: "Acvp3lla",
-                firstname: "Luciano",
-                lastname: "Gordon",
-                location: "Ibiza, Spain",
-                joined_on: "12/4/2015",
-                bio: "Where my crown at?",
-                postCount: 22,
-                followers: 3,
-                profile_image: "/static/images/person-male.png"
-            },
-            counter:0
+            user : {},
+            posts: [],
+            followers:0
         };
     },
+    
     methods:{
-        followuser: function(){
-            return '';
+    },
+    created:
+        function(){
+            let self = this;
+            fetch('/api/users/' + this.$route.params.user_id,{
+                method:'GET',
+                body:{},
+                headers:{
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                },
+                credentials:'same-origin'
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                self.user      = jsonResonse.User;
+                self.posts     = jsonResonse.Posts;
+                self.followers = self.user.number_of_followers;
+                console.log(jsonResonse)
+            })
+        },
+        watch:{
+            '$route' (to, from){
+                let user_id = to.params.user_id;
+                console.log(to);
+                this.$router.go(to);
+            }
         }
-    }
+        
 });
 
 
 const explore = Vue.component('explore',{
     template:
     `
-    
     <div class="platter">
         <div v-for = 'post in posts.reverse()'>
         <div class="outerborder">
@@ -490,17 +526,24 @@ const explore = Vue.component('explore',{
                 }
             })
         },
+        watch:{
+            '$route' (to, from){
+            let user_id = to.params.user_id;
+            console.log(to);
+            this.$router.go(to);
+            }
+        }
 });
 
 // Define Routes
 const router = new VueRouter({
     routes: [
-        { path: "/",           component: Home },
-        { path: "/loginform",  component: loginForm},
-        { path: "/register",   component: signupForm},
-        { path: "/uploadForm", component: uploadForm},
-        { path: "/profile",    component: profile},
-        { path: "/explore",   component: explore}
+        { path: "/",                    component: Home },
+        { path: "/loginform",           component: loginForm},
+        { path: "/register",            component: signupForm},
+        { path: "/uploadForm",          component: uploadForm},
+        { path: "/users/:user_id",     component: profile,name:'profile'},
+        { path: "/explore",             component: explore}
     ]
 });
 
