@@ -98,4 +98,4 @@ class Follow(db.Model):
         self.follower_id = follower_id
         
     def __repr__(self):
-        return '<Follow User: {0} - Followed by: {1}>'.format(self.userid,self.folloer_id)
+        return '<Follow User: {0} - Followed by: {1}>'.format(self.userid,self.follower_id)

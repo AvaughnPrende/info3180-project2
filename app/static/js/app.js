@@ -413,8 +413,8 @@ const profile = Vue.component('profile',{
                     </div>
                 </div>
                 
-                <div class="btn" v-if = '!(current_user == user.id)'>
-                    <button type="button" class="btn btn-primary btn-block" @submit.prevent = 'followuser'>Follow</button>
+                <div class="btn"  v-if = '!(current_user == user.id)'>
+                    <button id = 'follow' type="button" class="btn btn-primary btn-block" @click = 'followuser'>Follow</button>
                 </div>
                 
             </div>
@@ -436,16 +436,61 @@ const profile = Vue.component('profile',{
             user : {},
             posts: [],
             followers:0,
-            current_user:localStorage.getItem('current_user')
+            current_user:localStorage.getItem('current_user'),
+            response:""
         };
     },
     
     methods:{
+        followuser: function(){
+            let self = this;
+            let current_user=localStorage.getItem('current_user');
+            console.log(self.$route.params.user_id);
+            body = {'user_id': self.$route.params.user_id,'current_user':current_user}
+            data = new FormData(body);
+            fetch('/api/users/'+ self.$route.params.user_id+'/follow',{
+                method:'POST',
+                body:data,
+                headers:{
+                    'Content-Type':'application/json',
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                },
+                credentials:'same-origin'
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                self.response = jsonResonse.message;
+                console.log(jsonResonse);
+                
+                if(jsonResonse.newRelationship == 'true'){
+                    fetch('/api/users/' + self.$route.params.user_id + '/follow',{
+                        method:'GET',
+                        headers:{
+                            'X-CSRFToken' : token,
+                            'Authorization': 'Bearer '  + localStorage.getItem('token')
+                        },
+                        credentials:'same-origin'
+                    })
+                    .then(function(response){
+                        return response.json();
+                    })
+                    .then(function(jsonResonse){
+                        self.followers = jsonResonse.followers;
+                        $('#follow').css('background-color','green');
+                        $('#follow').text('Following');
+                        console.log(jsonResonse)
+                    })
+                }
+            })
+        }
     },
     created:
         function(){
             let self = this;
-            fetch('/api/users/' + this.$route.params.user_id,{
+            fetch('/api/users/' + self.$route.params.user_id,{
                 method:'GET',
                 body:{},
                 headers:{
@@ -462,6 +507,26 @@ const profile = Vue.component('profile',{
                 self.posts     = jsonResonse.Posts;
                 self.followers = self.user.number_of_followers;
                 console.log(jsonResonse)
+            })
+            
+            fetch('/api/users/' + self.$route.params.user_id + '/following',{
+                method:'GET',
+                body:{},
+                headers:{
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                },
+                credentials:'same-origin'
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                if(jsonResonse.following){
+                    $('#follow').css('background-color','green');
+                    $('#follow').text('Following');
+                }
+                console.log(jsonResonse);
             })
         },
         watch:{

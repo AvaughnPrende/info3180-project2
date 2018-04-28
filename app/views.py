@@ -214,7 +214,7 @@ def get_all_posts():
         return jsonify({'POSTS':list_of_all_posts})
     return jsonify_errors(['Only GET requests are accepted'])
     
-    
+
 #------------------------Follow Routes--------------------------    
 @app.route('/api/users/<user_id>/follow',methods = ['POST'])
 @jwt_token_required
@@ -228,13 +228,21 @@ def follow_user(current_user,user_id):
         return jsonify({'error': 'This user does not exist'})
     
     if request.method == 'POST':
-        user_id             = request.values.get('user_id')
         follower_id         = current_user.id
-        follow_relationship = Follow(follower_id=follower_id,userid=user_id)
-        db.session.add(follow_relationship)
-        db.session.commit()
-        response = {'message':'You are now following that user'}
-        return jsonify(response)
+        
+        pre_existing_relationship = Follow.query.filter_by(follower_id=follower_id,userid=user_id).first()
+        
+        if pre_existing_relationship == None:
+            follow_relationship = Follow(follower_id=follower_id,userid=user_id)
+            print(follow_relationship)
+            db.session.add(follow_relationship)
+            db.session.commit()
+            response = {'message':'You are now following that user','newRelationship':'true'}
+            return jsonify(response)
+        else:
+            response = {'message':'You are already following that user','newRelationship':'false'}
+            print(response)
+            return jsonify(response)
     return jsonify_errors(['Only POST requests are accepted'])
     
 
@@ -254,6 +262,24 @@ def get_number_of_followers(current_user,user_id):
         return jsonify({'followers':number_of_followers})
     return jsonify_errors(['Only GET requests are accepted'])
 
+@app.route('/api/users/<user_id>/following',methods = ['GET'])
+@jwt_token_required
+def is_following(current_user,user_id):
+    """Returns a json object telling whether or not 
+    the currently loggd in user is following the user with id
+    <user_id>
+    """
+    user = User.query.filter_by(id = user_id).first()
+    
+    if user == None:
+        return jsonify_errors(['This user does not exist'])
+    relationship = Follow.query.filter_by(userid = user_id,follower_id = current_user.id).first()
+    
+    if relationship == None:
+        return jsonify({'following':False})
+    else:
+        return jsonify({'following':True})
+    
 
 #------------------------Likes Routes-------------------------- 
 @app.route('/api/posts/<post_id>/like',methods = ['POST'])
