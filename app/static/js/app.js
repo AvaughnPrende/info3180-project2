@@ -620,11 +620,11 @@ const profile = Vue.component('profile',{
         watch:{
             '$route' (to, from){
                 let user_id = to.params.user_id;
-                //console.log(to);
                 this.$router.go(to);
             }
         }
 });
+
 
 
 const explore = Vue.component('explore',{
@@ -644,7 +644,7 @@ const explore = Vue.component('explore',{
             {{ response.message }}
         </div>
     </div>
-    <
+    
     <div class="platter">
         <div v-for = 'post in posts'>
         <div class="outerborder">
