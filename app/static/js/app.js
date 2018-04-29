@@ -646,7 +646,7 @@ const explore = Vue.component('explore',{
     </div>
     
     <div class="platter">
-        <div v-for = 'post in posts'>
+        <div v-for = 'post in posts.slice().reverse()'>
         <div class="outerborder">
             <div id = 'username' class="uname" @click = 'goToUserPage' :user_id = post.userid>
                 {{post.username}}
