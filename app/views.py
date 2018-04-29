@@ -152,8 +152,6 @@ def get_user_details(current_user,user_id):
         posts = [post.photo for post in posts]
         return jsonify({'User':user_data,'Posts':posts})
         
-        
-    return jsonify_errors(['Only GET requests are accepted'])
     
     
 #---------------------------Posts Routes-----------------------------
@@ -200,7 +198,6 @@ def view_posts(current_user,user_id):
         posts         = Post.query.filter_by(userid = user_id).all()
         list_of_posts = [dictify(post) for post in posts]
         return jsonify({'POSTS':list_of_posts})
-    return jsonify_errors(['Only GET requests are accepted'])
 
 
 @app.route('/api/posts',methods = ['GET'])
@@ -215,7 +212,6 @@ def get_all_posts():
             post['username'] = username
             post['likes'] = Like.query.filter_by(postid = post['id']).count()
         return jsonify({'POSTS':list_of_all_posts})
-    return jsonify_errors(['Only GET requests are accepted'])
     
 
 #------------------------Follow Routes--------------------------    
@@ -246,7 +242,6 @@ def follow_user(current_user,user_id):
             response = {'message':'You are already following that user','newRelationship':'false'}
             print(response)
             return jsonify(response)
-    return jsonify_errors(['Only POST requests are accepted'])
     
 
 @app.route('/api/users/<user_id>/follow',methods = ['GET'])
@@ -263,7 +258,7 @@ def get_number_of_followers(current_user,user_id):
     if request.method == 'GET':
         number_of_followers = len(Follow.query.filter_by(userid = user_id).all())
         return jsonify({'followers':number_of_followers})
-    return jsonify_errors(['Only GET requests are accepted'])
+
 
 @app.route('/api/users/<user_id>/following',methods = ['GET'])
 @jwt_token_required
@@ -314,7 +309,6 @@ def like_post(current_user,post_id):
         else:
             number_of_likes = len(Like.query.filter_by(postid = post_id).all())
             return jsonify({'message': 'You already like that Post','likes':number_of_likes})
-    return jsonify_errors(['Only POST requests are accepted'])
 
 
 @app.route('/api/users/<user_id>/like',methods = ['GET'])

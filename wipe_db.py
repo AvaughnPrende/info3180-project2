@@ -28,6 +28,8 @@ try:
     for table in tables:
         print('Attempting to wipe table: ' + table.__tablename__)
         db_wipe(table)
+    
+    print('\nSuccessfully removed data from all tables')
 
 except Exception as e:
     print(e)
