@@ -67,6 +67,8 @@ Vue.component('app-header', {
 
 const Home = Vue.component('home', {
     template: `
+    <div>
+    <br>
     <div class="containment-box">
         <div class="logo">
             <div>
@@ -81,7 +83,8 @@ const Home = Vue.component('home', {
             <router-link class="btn btn-primary col-md-5" to="/login">Login</router-link>
         </div>
         
-    </div>   
+    </div>
+    </div>
     `,
     data: function() {
             return {
@@ -118,14 +121,28 @@ Vue.component('app-footer', {
 const loginForm = Vue.component('login',{
     template:
     `
+    <div>
     <div class="fcont">
         <div class="login-form">
             <div class="head">
                 <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
             <br>
+            <div class="errrr">
+                <div v-if ="errors.length > 0">
+                    <ul>
+                        <li v-for="error in errors" class="alert-danger">
+                            {{ error.error }}
+                        </li>
+                    </ul>
+                </div>
+                <div v-else class="alert-success">
+                    {{ response.message }}
+                </div>
+            </div>
+            <br>
             <div class="form-ish">
-                <form  @submit.prevent="loginUser" methos = 'post' name = 'login_form' id = 'loginform'>
+                <form  @submit.prevent="loginUser" method = 'post' name = 'login_form' id = 'loginform'>
                 <div class="form-group">
                     <label   for = 'username'     id = 'username_label'><h5>Username:</h5></label>
                     <input class = 'form-control' id = 'username' type = 'text' name = 'username' rows = '5' placeholder="Enter Username" >
@@ -142,9 +159,12 @@ const loginForm = Vue.component('login',{
             </div>
         </div>
     </div>
+    </div>
     `,
     data:function (){
         return {
+            response: {},
+            errors: []
         };
     },
     methods:{
@@ -167,6 +187,7 @@ const loginForm = Vue.component('login',{
                     localStorage.setItem('token',jsonResonse.jwt_token);
                     localStorage.setItem('current_user',jsonResonse.current_user);
                     self.response = jsonResonse.message;
+                    self.errors = [];
                     bus.$emit('loggedIn');
                     console.log(self.response);
                     self.$router.push({path:'/explore'})
@@ -174,9 +195,11 @@ const loginForm = Vue.component('login',{
                 }
                 else{
                     self.errors = jsonResonse.Errors;
-                    console.log(self.errors)
+                    console.log(self.error);
                 }
-            })
+            }).catch(function(error){
+                console.log(error);
+            });
         }
     },
     watch:{
@@ -192,12 +215,24 @@ const loginForm = Vue.component('login',{
 const uploadForm = Vue.component('uploadForm',{
     template:
     `
+    <div>
     <div class="upcont">
         <div class="upload-form">
             <div class="head">
                 <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
-            <br>
+            <div class="errrr">
+                <div v-if ="errors.length > 0">
+                    <ul>
+                        <li v-for="error in errors" class="alert-danger">
+                            {{ error.error }}
+                        </li>
+                    </ul>
+                </div>
+                <div v-else class="alert-success">
+                    {{ response.message }}
+                </div>
+            </div>
             <div class="form-ish">
                 <form id = 'uploadform' enctype = 'multipart/form-data' method = 'POST' @submit.prevent="createNewPost" name = 'uploadform'>
                 <div class="form-group">
@@ -210,13 +245,14 @@ const uploadForm = Vue.component('uploadForm',{
                     <textarea class ="form-control" id ="caption" name ="caption" rows = '5'></textarea>
                 </div>
                 
-                <div class="form-group">
+                <div id="space" class="form-group">
                     <button type="submit" name="submit" class="btn btn-primary btn-block">Upload</button>
                 </div>
                 </form>
             </div>
         </div>
     </div>
+    <div>
     `,
     data:function (){
         return {
@@ -246,14 +282,17 @@ const uploadForm = Vue.component('uploadForm',{
             .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse.message;
+                    self.errors   = [];
                     self.$router.push({path:'/explore'});
-                    //console.log(self.response);
+                    console.log(self.response);
                 }
                 else{
                     self.errors = jsonResonse.Errors;
                     console.log(self.errors);
                 }
-            })
+            }).catch(function(error){
+                console.log(error);
+            });
         }
     },
     watch:{
@@ -269,13 +308,27 @@ const uploadForm = Vue.component('uploadForm',{
 const signupForm = Vue.component('signupform',{
     template:
     `
+    <div>
     <div class="scont">
         <div id = 'register-page'>
             <div class="head">
                 <img src="/static/images/logo.png" height="48px" width="120px" alt="Logo">
                 <p>Let the world see the best you.</p>
             </div>
-            
+            <br>
+            <div class="errrr">
+                <div v-if ="errors.length > 0">
+                    <ul>
+                        <li v-for="error in errors" class="alert-danger">
+                            {{ error.error }}
+                        </li>
+                    </ul>
+                </div>
+                <div v-else class="alert-success">
+                    {{ response.message }}
+                </div>
+            </div>
+            <br>
             <form @submit.prevent="RegisterUser" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
                 <div class="form-group">
                     <label   for = 'username' id = 'username_label'> <h5>Username</h5> </label>
@@ -323,12 +376,13 @@ const signupForm = Vue.component('signupform',{
             </form>
         </div>
     </div>
+    </div>
     `,
     data: function(){
         return {
             response:{},
             errors:[]
-        }
+        };
     },
     methods: {
         RegisterUser: function(){
@@ -336,7 +390,6 @@ const signupForm = Vue.component('signupform',{
             let signupform = document.getElementById("signupform");
             let form_data  = new FormData(signupform);
 
-            
             fetch('/api/users/register',{
                 method:  'POST',
                 body: form_data,
@@ -352,14 +405,19 @@ const signupForm = Vue.component('signupform',{
             .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse;
-                    self.$router.push({path:'/login'})
+                    self.errors = [];
+                    self.$router.push({path:'/login'});
 
                     console.log(jsonResonse);
                 }
                 else{
                     console.log(jsonResonse);
                     self.errors = jsonResonse.Errors;
+                    console.log(self.errors);
                 }
+            })
+            .catch(function(error){
+                console.log(error);
             });
         }
     },
@@ -376,12 +434,26 @@ const signupForm = Vue.component('signupform',{
 const profile = Vue.component('profile',{
     template:
     `
+    <div>
+    <div class="errrr">
+            <div v-if ="errors.length > 0">
+                <ul>
+                    <li v-for="error in errors" class="alert-danger">
+                        {{ error.error }}
+                    </li>
+                </ul>
+            </div>
+            <div v-else class="alert-success">
+                {{ response.message }}
+            </div>
+        </div>
+    <br>
     <div class="outside">
     
         <div class="top">
             <div class="top-right">
                 <div class="propic">
-                    <img :src="'/static/images/' + user.profile_photo" height="200px" width="200px" alt="Logo">
+                    <img :src="'/static/images/' + user.profile_photo" height="200px" width="200px" alt="profile photo">
                 </div>
                 <div class="userdeets">
                     <div class="uname">
@@ -392,7 +464,7 @@ const profile = Vue.component('profile',{
                     </div>
                     <div class="locndate">
                         <p>{{ user.location }} </p>
-                        <p><label>Member since </label> {{user.joined_on}}</p>
+                        <p><label>Member Since: </label> {{user.joined_on}}</p>
                     </div>
                     <div class="bio">
                         <p>{{ user.bio }}</p>
@@ -408,7 +480,7 @@ const profile = Vue.component('profile',{
                         <h6>Posts</h6>
                     </div>
                     <div class="folrs">
-                        <h5>{{ followers }}</h5> <!-- ignore for now {{ counter }} -->
+                        <h5>{{ followers }}</h5>
                         <h6>Followers</h6>
                     </div>
                 </div>
@@ -430,6 +502,7 @@ const profile = Vue.component('profile',{
         </div>
         
     </div>
+    </div>
     `,
     data:function (){
         return {
@@ -437,7 +510,8 @@ const profile = Vue.component('profile',{
             posts: [],
             followers:0,
             current_user:localStorage.getItem('current_user'),
-            response:""
+            response:"",
+            errors:[]
         };
     },
     
@@ -527,7 +601,21 @@ const profile = Vue.component('profile',{
                 }
                 //console.log(jsonResonse);
             })
+            .then(function(jsonResonse){
+               if(jsonResonse.Errors == null){
+                   self.response = jsonResonse;
+                   self.errors = [];
+                   console.log(self.response);
+               }
+               else{
+                   self.errors = jsonResonse.Errors;
+                   console.log(self.errors);
+               }
             })
+            .catch(function(error){
+                console.log(error);
+            });
+            });
         },
         watch:{
             '$route' (to, from){
@@ -542,28 +630,44 @@ const profile = Vue.component('profile',{
 const explore = Vue.component('explore',{
     template:
     `
+    <div>
+    <div>
+    <div class="errrr">
+        <div v-if ="errors.length > 0">
+            <ul>
+                <li v-for="error in errors" class="alert-danger">
+                    {{ error.error }}
+                </li>
+            </ul>
+        </div>
+        <div v-else class="alert-success">
+            {{ response.message }}
+        </div>
+    </div>
+    <
     <div class="platter">
-        <div v-for = 'post in posts.reverse()'>
+        <div v-for = 'post in posts'>
         <div class="outerborder">
             <div id = 'username' class="uname" @click = 'goToUserPage' :user_id = post.userid>
                 {{post.username}}
             </div>
-            
             <div class="content">
             
                 <div class="imgpst">
                     <img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >
                 </div>
-            
+                
                 <div class="btns">
                     <div class="likebtn">
-                        <button id="pbtn" class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
+                        <button v-if = 'liked_posts.includes(post.id)' id="like-btn" @click= 'likePost' :post_id = post.id class="btn" type="button" style="background:red; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
+                        <button v-else id="like-btn" @click= 'likePost' :post_id = post.id class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
+                        {{post.likes}}<p v-if = 'post.likes >1 || post.likes == 0'>Likes</p><p v-if = 'post.likes ==1'>Like</p>
                     </div>
-                    <div class="comntbtn">
+                    <div class="comntbtn" >
                         <button id="pbtn" class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/comment.png" height="25px" width="25px" alt="like"></button>
                     </div>
                 </div>
-            
+                
                 <div class="capt">
                     <p>{{post.caption}}</p>
                 </div>
@@ -571,16 +675,21 @@ const explore = Vue.component('explore',{
         </div>
         </div>
     </div>
+    </div>
+    </div>
     `,
     data:function (){
         return {
+            response:[],
             posts:[],
             errors:[],
-        };
+            liked_posts:[]
+        }
     },
     created:
         function(){
             let self = this;
+            let user_id = localStorage.getItem('current_user');
             
             fetch('/api/posts',{
                 method:'GET',
@@ -589,17 +698,36 @@ const explore = Vue.component('explore',{
                     'X-CSRFToken' : token,
                     'Authorization': 'Bearer '  + localStorage.getItem('token')
                 }
-            }).then(function(response){
+            })
+            .then(function(response){
                 return response.json();
-            }).then(function(jsonResonse){
+            })
+            .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.posts = jsonResonse.POSTS;
+                    return self.posts
                 }
                 else{
                     self.errors = jsonResonse.Errors;
                     //console.log(this.errors);
                 }
-            });
+            })
+            .then(function(posts){
+                fetch('/api/users/'+user_id+'/like',{
+                method:'GET',
+                headers:{
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                }
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                self.liked_posts = jsonResonse.liked_posts.map(post => post.postid)
+                console.log(self.liked_posts);
+            })
+            })
         },
         watch:{
             '$route' (to, from){
@@ -612,9 +740,49 @@ const explore = Vue.component('explore',{
             goToUserPage: function(event){
                 user_id = $(event.target).attr('user_id');
                 this.$router.push({name:'user',params:{'user_id':user_id}});
+            },
+            likePost:
+                function(event){
+                    let self = this;
+                    let like_button;
+                    
+                    if($(event.target).is('button')){
+                        like_button = $(event.target);
+                    }
+                    else{
+                        like_button = $(event.target).parent();
+                    }
+                    
+                    let post_id = like_button.attr('post_id');
+                    console.log(post_id);
+                    
+                    fetch('/api/posts/'+post_id+'/like',{
+                    method:'POST',
+                    body:{},
+                    headers:{
+                    'X-CSRFToken' : token,
+                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                },
+                credentials:'same-origin'
+            })
+            .then(function(response){
+                return response.json();
+            })
+            .then(function(jsonResonse){
+                let liked_post;
+                let index;
+                let i;
+                for(i=0;i<self.posts.length;i++){
+                    if(self.posts[i].id == post_id){
+                        index = i;
+                    }
+                }
+                self.posts[index].likes = jsonResonse.likes;
+                like_button.css('background-color','red');
+            })
             }
         }
-});
+})
 
 let logout = Vue.component('logout',{
     template:"<html></html>",
@@ -631,16 +799,18 @@ let logout = Vue.component('logout',{
                 }
             })
             .then(function(response){
-                return response.json()
+                return response.json();
             })
             .then(function(jsonResonse){
                 self.response = jsonResonse.message;
                 localStorage.clear();
                 self.$router.push('/');
                 location.reload();
-            })
+            }).catch(function(error){
+               console.log(error);
+            });
         }
-})
+});
 
 // Define Routes
 const router = new VueRouter({

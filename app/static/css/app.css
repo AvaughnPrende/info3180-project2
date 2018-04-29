@@ -20,7 +20,7 @@ footer  {
     border: solid 0px #af00ad;
     border-radius: 5px;
     width: 380px;
-    height: 380px;
+    height: auto;
     background: linear-gradient(to right, #ff4264 , #af00ad);
     font-family: 'Fjalla One', sans-serif;
 }
@@ -31,10 +31,10 @@ footer  {
     border: solid 0px #af00ad;
     border-radius: 5px;
     width: 400px;
-    height: 1010px;
+    height: auto;
     background: linear-gradient(to right, #ff4264 , #af00ad);
     font-family: 'Fjalla One', sans-serif;
-     color: black;
+    color: black;
 }
 
 
@@ -79,7 +79,7 @@ footer  {
     border: solid 0px #af00ad;
     border-radius: 5px;
     width: 380px;
-    height: 440px;
+    height: auto;
     background: linear-gradient(to right, #ff4264 , #af00ad);
     font-family: 'Fjalla One', sans-serif;
 }

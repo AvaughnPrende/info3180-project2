@@ -126,6 +126,7 @@ def register():
         response = {'message': 'User successfully registered'}
         return jsonify(response)
         
+        
     return jsonify_errors(form_errors(signForm))
         
 
@@ -145,11 +146,12 @@ def get_user_details(current_user,user_id):
         posts = Post.query.filter_by(userid = user.id)
         number_of_followers = Follow.query.filter_by(userid = user.id).count()
         user_data = dictify(user)
-        user_data['joined_on'] = user_data['joined_on'].strftime("%B %d, %Y")
+        user_data['joined_on'] = user_data['joined_on'].strftime("%B %Y")
         del user_data['password']
         user_data['number_of_followers'] = number_of_followers
         posts = [post.photo for post in posts]
         return jsonify({'User':user_data,'Posts':posts})
+        
         
     return jsonify_errors(['Only GET requests are accepted'])
     
@@ -211,6 +213,7 @@ def get_all_posts():
         for post in list_of_all_posts:
             username = User.query.filter_by(id = post['userid']).first().username
             post['username'] = username
+            post['likes'] = Like.query.filter_by(postid = post['id']).count()
         return jsonify({'POSTS':list_of_all_posts})
     return jsonify_errors(['Only GET requests are accepted'])
     
@@ -288,22 +291,49 @@ def like_post(current_user,post_id):
     """Creates a like relationship where the current users likes 
     the post with id <post_id>
     """
-    post = Post.query.filter_by(id = post_id).first()
+    print('x')
+    post    = Post.query.filter_by(id = post_id).first()
+    print(post.id)
+    user_id = current_user.id
+    print(user_id)
     
     if post == None:
         return jsonify_errors(['This post does not exist'])
     
     if request.method == 'POST':
-        like = Like(postid = request.values.get('post_id'),\
-                    userid = request.values.get('user_id'))
-        db.session.add(like)
-        db.session.commit()
-        number_of_likes = len(Like.query.filter_by(postid = post_id).all())
-        return jsonify({'message': 'You like that Post','likes':number_of_likes})
+        
+        pre_existing_relationship = Like.query.filter_by(postid = post_id,userid = current_user.id).first()
+        print(pre_existing_relationship)
+
+        if pre_existing_relationship == None:
+            like = Like(postid =post_id,userid = user_id)
+            db.session.add(like)
+            db.session.commit()
+            number_of_likes = len(Like.query.filter_by(postid = post_id).all())
+            return jsonify({'message': 'You like that Post','likes':number_of_likes})  
+        else:
+            number_of_likes = len(Like.query.filter_by(postid = post_id).all())
+            return jsonify({'message': 'You already like that Post','likes':number_of_likes})
     return jsonify_errors(['Only POST requests are accepted'])
 
 
-
+@app.route('/api/users/<user_id>/like',methods = ['GET'])
+@jwt_token_required
+def get_liked_posts(current_user,user_id):
+    """
+    Returns a list of posts liked by the user with user id
+    """
+    user    = User.query.filter_by(id = user_id).first()
+    user_id = current_user.id
+    
+    if user == None:
+        return jsonify_errors(['This user does not exist'])
+    
+    liked_posts = Like.query.filter_by(userid = user_id).all()
+    dict_liked_posts = [dictify(post) for post in liked_posts]
+    print(dict_liked_posts)
+    return jsonify({'liked_posts':dict_liked_posts})
+    
 ###
 # The functions below should be applicable to all Flask apps.
 ###
