@@ -252,7 +252,7 @@ const uploadForm = Vue.component('uploadForm',{
             </div>
         </div>
     </div>
-    <div>
+    </div>
     `,
     data:function (){
         return {
