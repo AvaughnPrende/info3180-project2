@@ -123,7 +123,6 @@ const loginForm = Vue.component('login',{
             <div class="head">
                 <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
-            <br>
             <div class="errrr">
                 <div v-if ="errors.length > 0">
                     <ul>
@@ -136,7 +135,6 @@ const loginForm = Vue.component('login',{
                     {{ response.message }}
                 </div>
             </div>
-            <br>
             <div class="form-ish">
                 <form  @submit.prevent="loginUser" method = 'post' name = 'login_form' id = 'loginform'>
                 <div class="form-group">
@@ -151,6 +149,7 @@ const loginForm = Vue.component('login',{
                 <div class="form-group">
                     <button type="submit" name="submit" class="btn btn-primary btn-block">Log in</button>
                 </div>
+                <br>
                 </form>
             </div>
         </div>
@@ -309,7 +308,6 @@ const signupForm = Vue.component('signupform',{
                 <img src="/static/images/logo.png" height="48px" width="120px" alt="Logo">
                 <p>Let the world see the best you.</p>
             </div>
-            <br>
             <div class="errrr">
                 <div v-if ="errors.length > 0">
                     <ul>
@@ -322,7 +320,6 @@ const signupForm = Vue.component('signupform',{
                     {{ response.message }}
                 </div>
             </div>
-            <br>
             <form @submit.prevent="RegisterUser" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
                 <div class="form-group">
                     <label   for = 'username' id = 'username_label'> <h5>Username</h5> </label>
@@ -367,6 +364,7 @@ const signupForm = Vue.component('signupform',{
                 <div class="form-group">
                     <button type="submit" name="submit" class="btn btn-primary btn-block">Sign Up</button>
                 </div>
+                <br>
             </form>
         </div>
     </div>
@@ -429,18 +427,17 @@ const profile = Vue.component('profile',{
     `
     <div>
     <div class="errrr">
-            <div v-if ="errors.length > 0">
-                <ul>
-                    <li v-for="error in errors" class="alert-danger">
-                        {{ error.error }}
-                    </li>
-                </ul>
-            </div>
-            <div v-else class="alert-success">
-                {{ response.message }}
-            </div>
+        <div v-if ="errors.length > 0">
+            <ul>
+                <li v-for="error in errors" class="alert-danger">
+                    {{ error.error }}
+                </li>
+            </ul>
         </div>
-    <br>
+        <div v-else class="alert-success">
+            {{ response.message }}
+        </div>
+    </div>
     <div class="outside">
     
         <div class="top">
