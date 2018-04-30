@@ -123,7 +123,7 @@ const loginForm = Vue.component('login',{
             <div class="head">
                 <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
-            <div class="errrr">
+            <div class="errrr" align="center">
                 <div v-if ="errors.length > 0">
                     <ul>
                         <li v-for="error in errors" class="alert-danger">
@@ -215,7 +215,7 @@ const uploadForm = Vue.component('uploadForm',{
             <div class="head">
                 <img src="/static/images/logo.png" height="60px" width="150px" alt="Logo">
             </div>
-            <div class="errrr">
+            <div class="errrr" align="center">
                 <div v-if ="errors.length > 0">
                     <ul>
                         <li v-for="error in errors" class="alert-danger">
@@ -224,7 +224,7 @@ const uploadForm = Vue.component('uploadForm',{
                     </ul>
                 </div>
                 <div v-else class="alert-success">
-                    {{ response.message }}
+                    {{ response }}
                 </div>
             </div>
             <div class="form-ish">
@@ -251,7 +251,7 @@ const uploadForm = Vue.component('uploadForm',{
     `,
     data:function (){
         return {
-            response:{},
+            response:"",
             errors:[]
         };
     },
@@ -278,8 +278,8 @@ const uploadForm = Vue.component('uploadForm',{
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse.message;
                     self.errors   = [];
-                    self.$router.push({path:'/explore'});
-                    console.log(self.response);
+                    $("#uploadform")[0].reset();
+                    console.log(jsonResonse)
                 }
                 else{
                     self.errors = jsonResonse.Errors;
@@ -309,7 +309,7 @@ const signupForm = Vue.component('signupform',{
                 <img src="/static/images/logo.png" height="48px" width="120px" alt="Logo">
                 <p>Let the world see the best you.</p>
             </div>
-            <div class="errrr">
+            <div class="errrr" align="center">
                 <div v-if ="errors.length > 0">
                     <ul>
                         <li v-for="error in errors" class="alert-danger">
@@ -318,7 +318,7 @@ const signupForm = Vue.component('signupform',{
                     </ul>
                 </div>
                 <div v-else class="alert-success">
-                    {{ response.message }}
+                    {{ response }}
                 </div>
             </div>
             <form @submit.prevent="RegisterUser" method="post" name = 'signup_form' id = 'signupform' enctype = 'multipart/form-data'>
@@ -373,7 +373,7 @@ const signupForm = Vue.component('signupform',{
     `,
     data: function(){
         return {
-            response:{},
+            response:"",
             errors:[]
         };
     },
@@ -399,7 +399,6 @@ const signupForm = Vue.component('signupform',{
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse;
                     self.errors = [];
-                    self.$router.push({path:'/login'});
 
                     console.log(jsonResonse);
                 }
@@ -428,7 +427,7 @@ const profile = Vue.component('profile',{
     `
     <div>
     <div class="errrr">
-        <div v-if ="errors.length > 0">
+        <div v-if ="errors.length > 0" align="center">
             <ul>
                 <li v-for="error in errors" class="alert-danger">
                     {{ error.error }}
@@ -448,13 +447,13 @@ const profile = Vue.component('profile',{
                 </div>
                 <div class="userdeets">
                     <div class="uname">
-                        <h3>{{ user.username }}</h3>
+                        <h2>{{ user.username }}</h2>
                     </div>
                     <div class="uflname">
-                        <h4>{{ user.firstname }} {{ user.lastname }}</h4>
+                        <h5>{{ user.firstname }} {{ user.lastname }}</h5>
                     </div>
                     <div class="locndate">
-                        <p>{{ user.location }} </p>
+                        <h7>{{ user.location }} </h7>
                         <p><label>Member Since: </label> {{user.joined_on}}</p>
                     </div>
                     <div class="bio">
@@ -617,7 +616,7 @@ const explore = Vue.component('explore',{
     `
     <div>
     <div>
-    <div class="errrr">
+    <div class="errrr" align="center">
         <div v-if ="errors.length > 0">
             <ul>
                 <li v-for="error in errors" class="alert-danger">

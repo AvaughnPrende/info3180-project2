@@ -8,6 +8,10 @@ footer  {
     padding-top: 20px;
 }
 
+h2{
+    font-weight: 700;
+}
+
 .bg-nav{
     background: linear-gradient(to right, #ff4264 , #af00ad);
     font-family: 'Fjalla One', sans-serif;
@@ -227,4 +231,8 @@ footer  {
 .picNname{
     display: grid;
     grid-template-columns: repeat(2,.08fr);
+}
+
+.errrr{
+    text-align: center;
 }
