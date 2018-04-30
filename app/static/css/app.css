@@ -14,6 +14,13 @@ footer  {
     font-weight: bold;
 }
 
+.btn-color{
+    background: linear-gradient(to right, #ff4264 , #af00ad);
+    font-family: 'Fjalla One', sans-serif;
+    font-weight: bold;
+    color: white;
+}
+
 .fcont {
     margin:auto;
     margin-top: 30px;
@@ -166,7 +173,7 @@ footer  {
 .outerborder{
     margin:auto;
     margin-top: 20px;
-    width: 80%;
+    width: 83.5%;
     border: solid 8px white;
 }
 
@@ -202,4 +209,22 @@ footer  {
 .errrr {
     font-family: 'Fjalla One', sans-serif;
     font-weight: bold;
+}
+
+.likebtn {
+    display: grid;
+    grid-template-columns: repeat(4,.5fr);
+}
+
+.dtnL {
+    
+    margin:auto;
+    display: grid;
+    grid-template-columns: 2fr .5fr;
+    
+}
+
+.picNname{
+    display: grid;
+    grid-template-columns: repeat(2,.08fr);
 }

@@ -164,7 +164,7 @@ def post(current_user,user_id):
     uploadform = Upload()
     user = User.query.filter_by(id = user_id).first()
     
-    print(request.files['image'])
+    
     if user == None:
         return jsonify_errors(['User does not exist'])
         

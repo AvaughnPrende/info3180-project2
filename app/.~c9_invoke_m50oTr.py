@@ -142,7 +142,7 @@ def get_user_details(current_user,user_id):
     user = User.query.filter_by(id = user_id).first()
 
     if user == None:
-        return jsonify_errors(['User does not exist'])
+        user_data['joined_on'] = user_data['joined_on'].strftime("%d %B, %Y")
     
     if request.method == 'GET':
         posts = Post.query.filter_by(userid = user.id)
@@ -164,7 +164,7 @@ def post(current_user,user_id):
     uploadform = Upload()
     user = User.query.filter_by(id = user_id).first()
     
-    print(request.files['image'])
+    
     if user == None:
         return jsonify_errors(['User does not exist'])
         

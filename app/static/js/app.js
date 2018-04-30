@@ -172,7 +172,7 @@ const loginForm = Vue.component('login',{
                 method:'POST',
                 body:form_data,
                 headers:{
-                        'X-CSRFToken': token
+                        'X-CSRFToken': token,
                          },
                         credentials: 'same-origin'
             }).then(function(response){
@@ -458,7 +458,7 @@ const profile = Vue.component('profile',{
                         <p><label>Member Since: </label> {{user.joined_on}}</p>
                     </div>
                     <div class="bio">
-                        <p>{{ user.bio }}</p>
+                        <p>{{ user.biography }}</p>
                     </div>
                 </div>
             </div>
@@ -515,7 +515,6 @@ const profile = Vue.component('profile',{
                 method:'POST',
                 body:data,
                 headers:{
-                    'Content-Type':'application/json',
                     'X-CSRFToken' : token,
                     'Authorization': 'Bearer '  + localStorage.getItem('token')
                 },
@@ -544,7 +543,6 @@ const profile = Vue.component('profile',{
                         self.followers = jsonResonse.followers;
                         $('#follow').css('background-color','green');
                         $('#follow').text('Following');
-                        //console.log(jsonResonse)
                     });
                 }
             });
@@ -569,7 +567,6 @@ const profile = Vue.component('profile',{
                 self.user      = jsonResonse.User;
                 self.posts     = jsonResonse.Posts;
                 self.followers = self.user.number_of_followers;
-                //console.log(jsonResonse)
             }).then(function(){
                 fetch('/api/users/' + self.$route.params.user_id + '/following',{
                 method:'GET',
@@ -633,33 +630,46 @@ const explore = Vue.component('explore',{
         </div>
     </div>
     
+    
+    
     <div class="platter">
+        
+        <div class="newpost" align="center">
+            <router-link class="btn btn-color col-md-10" to="/posts/new">New Post</router-link>
+        </div>
+        
         <div v-for = 'post in posts.slice().reverse()'>
         <div class="outerborder">
-            <div id = 'username' class="uname" @click = 'goToUserPage' :user_id = post.userid>
-                {{post.username}}
+            <div class="picNname">
+                <div class="userpic">
+                    <img style="border-radius: 50%;" :src="'/static/images/' + post.user_image" height="40" width="40" alt = "pro pic">
+                </div>
+                <div id = 'username' class="uname" @click = 'goToUserPage' :user_id = post.userid>
+                    {{post.username}}
+                </div>
             </div>
             <div class="content">
             
                 <div class="imgpst">
                     <img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >
                 </div>
-                
-                <div class="btns">
-                    <div class="likebtn">
-                        <button v-if = 'liked_posts.includes(post.id)' id="like-btn" @click= 'likePost' :post_id = post.id class="btn" type="button" style="background:red; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
-                        <button v-else id="like-btn" @click= 'likePost' :post_id = post.id class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
-                        {{post.likes}}<p v-if = 'post.likes >1 || post.likes == 0'>Likes</p><p v-if = 'post.likes ==1'>Like</p>
-                    </div>
-                    <div class="comntbtn" >
-                        <button id="pbtn" class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/comment.png" height="25px" width="25px" alt="like"></button>
-                    </div>
-                </div>
-                
+                <br>
                 <div class="capt">
                     <p>{{post.caption}}</p>
                 </div>
             </div>
+            <div class="dtnL">
+                    <div class="btns">
+                        <div class="likebtn">
+                            <button v-if = 'liked_posts.includes(post.id)' id="like-btn" @click= 'likePost' :post_id = post.id class="btn" type="button" style="background:red; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
+                            <button v-else id="like-btn" @click= 'likePost' :post_id = post.id class="btn" type="button" style="background:white; font-size: 10px;"><img src="/static/images/like.png" height="25px" width="25px" alt="like"></button>
+                            {{post.likes}}  <p v-if = 'post.likes >1 || post.likes == 0'>Likes</p><p v-if = 'post.likes ==1'>Like</p>
+                        </div>
+                        </div>
+                        <div class="dt">
+                            {{post.created_on}}
+                        </div>
+                </div>
         </div>
         </div>
     </div>
@@ -668,6 +678,8 @@ const explore = Vue.component('explore',{
     `,
     data:function (){
         return {
+            current_user:localStorage.getItem('current_user'),
+            user : {},
             response:{},
             posts:[],
             errors:[],
@@ -704,7 +716,7 @@ const explore = Vue.component('explore',{
                 method:'GET',
                 headers:{
                     'X-CSRFToken' : token,
-                    'Authorization': 'Bearer '  + localStorage.getItem('token')
+                    'Authorization': 'Bearer '  + localStorage.getItem('token'),
                 }
             })
             .then(function(response){
