@@ -234,5 +234,9 @@ h2{
 }
 
 .errrr{
-    text-align: center;
+    margin: auto;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    width: 90%;
+    height: auto;
 }

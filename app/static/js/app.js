@@ -6,7 +6,7 @@ Vue.component('app-header', {
     template: `
         <header>
             <nav class="navbar navbar-expand-lg navbar-dark bg-nav fixed-top">
-              <router-link class="nav-link" to="/"><img src="/static/images/logo.png" height="48px" width="120px" alt="Logo"></router-link>
+              <router-link class="nav-link" to=""><img src="/static/images/logo.png" height="48px" width="120px" alt="Logo"></router-link>
               <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
               </button>
@@ -184,7 +184,7 @@ const loginForm = Vue.component('login',{
                     self.response = jsonResonse.message;
                     self.errors = [];
                     bus.$emit('loggedIn');
-                    console.log(self.response);
+                    //console.log(self.response);
                     self.$router.push({path:'/explore'})
                     location.reload();
                 }
@@ -279,7 +279,7 @@ const uploadForm = Vue.component('uploadForm',{
                     self.response = jsonResonse.message;
                     self.errors   = [];
                     $("#uploadform")[0].reset();
-                    console.log(jsonResonse)
+                    //console.log(jsonResonse)
                 }
                 else{
                     self.errors = jsonResonse.Errors;
@@ -398,9 +398,10 @@ const signupForm = Vue.component('signupform',{
             .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
                     self.response = jsonResonse;
+                    $("#signupform")[0].reset();
                     self.errors = [];
 
-                    console.log(jsonResonse);
+                    //console.log(jsonResonse);
                 }
                 else{
                     console.log(jsonResonse);
@@ -453,7 +454,7 @@ const profile = Vue.component('profile',{
                         <h5>{{ user.firstname }} {{ user.lastname }}</h5>
                     </div>
                     <div class="locndate">
-                        <h7>{{ user.location }} </h7>
+                        <p>{{ user.location }} </p>
                         <p><label>Member Since: </label> {{user.joined_on}}</p>
                     </div>
                     <div class="bio">
@@ -507,7 +508,7 @@ const profile = Vue.component('profile',{
         followuser: function(){
             let self = this;
             let current_user=localStorage.getItem('current_user');
-            console.log(self.$route.params.user_id);
+            //console.log(self.$route.params.user_id);
             body = {'user_id': self.$route.params.user_id,'current_user':current_user}
             data = new FormData(body);
             fetch('/api/users/'+ self.$route.params.user_id+'/follow',{
@@ -589,7 +590,7 @@ const profile = Vue.component('profile',{
                if(jsonResonse.Errors == null){
                    self.response = jsonResonse;
                    self.errors = [];
-                   console.log(self.response);
+                   //console.log(self.response);
                }
                else{
                    self.errors = jsonResonse.Errors;
@@ -650,7 +651,7 @@ const explore = Vue.component('explore',{
             <div class="content">
             
                 <div class="imgpst">
-                    <img class="img-responsive" :src= "'/static/images/' + post.photo" height="275" width="275" alt = "image upload" >
+                    <img class="img-responsive" :src= "'/static/images/' + post.photo" height="300" width="300" alt = "image upload" >
                 </div>
                 <br>
                 <div class="capt">
@@ -723,7 +724,7 @@ const explore = Vue.component('explore',{
             })
             .then(function(jsonResonse){
                 self.liked_posts = jsonResonse.liked_posts.map(post => post.postid)
-                console.log(self.liked_posts);
+                //console.log(self.liked_posts);
             })
             })
         },
@@ -751,7 +752,7 @@ const explore = Vue.component('explore',{
                         like_button = $(event.target).parent();
                     }
                     let post_id = like_button.attr('post_id');
-                    console.log(post_id);
+                    //console.log(post_id);
                     
                     fetch('/api/posts/'+post_id+'/like',{
                     method:'POST',
