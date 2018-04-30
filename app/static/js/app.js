@@ -397,7 +397,7 @@ const signupForm = Vue.component('signupform',{
             })
             .then(function(jsonResonse){
                 if(jsonResonse.Errors == null){
-                    self.response = jsonResonse;
+                    self.response = jsonResonse.message;
                     $("#signupform")[0].reset();
                     self.errors = [];
 
