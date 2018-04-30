@@ -60,8 +60,8 @@ class User(db.Model):
         
     def __repr__(self):
         return '<User {0}: {1} {2}>'.format(self.username,self.firstname,self.lastname)
- 
-        
+
+
 class Like(db.Model):
     """This is the schema to be used to create the 'likes' table for the 
         photogram database

@@ -2,7 +2,6 @@
 
 bus = new Vue();
 
-
 Vue.component('app-header', {
     template: `
         <header>
@@ -14,8 +13,6 @@ Vue.component('app-header', {
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                 </ul>
-                
-                <!--Should be modified so only a user which is logged in can see certain routes-->
                 
                 <ul class="navbar-nav">
                 <li class="nav-item active">
@@ -61,7 +58,7 @@ Vue.component('app-header', {
                 isLoggedIn: function(){
                     return !(localStorage.getItem('token')==null);
                 }
-            }
+        }
 });
 
 
@@ -94,7 +91,6 @@ const Home = Vue.component('home', {
         watch:{
             '$route' (to, from){
                 let user_id = to.params.user_id;
-                //console.log(to);
                 this.$router.go(to);
             }
         }
@@ -205,7 +201,6 @@ const loginForm = Vue.component('login',{
     watch:{
         '$route' (to, from){
             let user_id = to.params.user_id;
-            //console.log(to);
             this.$router.go(to);
             }
         }
@@ -298,7 +293,6 @@ const uploadForm = Vue.component('uploadForm',{
     watch:{
         '$route' (to, from){
             let user_id = to.params.user_id;
-            //console.log(to);
             this.$router.go(to);
             }
         }
@@ -424,7 +418,6 @@ const signupForm = Vue.component('signupform',{
     watch:{
         '$route' (to, from){
         let user_id = to.params.user_id;
-        //console.log(to);
         this.$router.go(to);
             }
         }
@@ -498,9 +491,7 @@ const profile = Vue.component('profile',{
                     <img class="img-responsive" :src="'/static/images/' + post" height="240" width="240" alt = "image upload" >
                 </div>
             </div>
-            
         </div>
-        
     </div>
     </div>
     `,
@@ -599,7 +590,6 @@ const profile = Vue.component('profile',{
                     $('#follow').css('background-color','green');
                     $('#follow').text('Following');
                 }
-                //console.log(jsonResonse);
             })
             .then(function(jsonResonse){
                if(jsonResonse.Errors == null){
@@ -709,7 +699,6 @@ const explore = Vue.component('explore',{
                 }
                 else{
                     self.errors = jsonResonse.Errors;
-                    //console.log(this.errors);
                 }
             })
             .then(function(posts){
@@ -752,7 +741,6 @@ const explore = Vue.component('explore',{
                     else{
                         like_button = $(event.target).parent();
                     }
-                    
                     let post_id = like_button.attr('post_id');
                     console.log(post_id);
                     
@@ -780,8 +768,8 @@ const explore = Vue.component('explore',{
                 self.posts[index].likes = jsonResonse.likes;
                 like_button.css('background-color','red');
             })
-            }
         }
+    }
 })
 
 let logout = Vue.component('logout',{
@@ -812,13 +800,14 @@ let logout = Vue.component('logout',{
         }
 });
 
+
 // Define Routes
 const router = new VueRouter({
     routes: [
         { path: "/",                component: Home },
-        { path: "/login",       component: loginForm},
+        { path: "/login",           component: loginForm},
         { path: "/register",        component: signupForm},
-        { path: "/posts/new",      component: uploadForm},
+        { path: "/posts/new",       component: uploadForm},
         { path: "/users/:user_id",  component: profile,name:'user'},
         { path: "/explore",         component: explore},
         { path: "/logout",          component: logout}
