@@ -67,7 +67,7 @@ def login():
     
     if request.method == "POST" and loginForm.validate_on_submit():
             
-        username = loginForm.username.data
+        username = loginForm.username.data.lower()
         password = loginForm.password.data
         users    = User.query.filter_by(username=username).all()
         
@@ -108,7 +108,7 @@ def register():
             
         firstname       = signForm.firstname.data
         lastname        = signForm.lastname.data
-        username        = signForm.username.data
+        username        = signForm.username.data.lower()
         hashed_password = generate_password_hash(signForm.password.data)
         location        = signForm.location.data
         email           = signForm.email.data
