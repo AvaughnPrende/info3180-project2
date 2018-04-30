@@ -251,7 +251,7 @@ const uploadForm = Vue.component('uploadForm',{
     `,
     data:function (){
         return {
-            response:'',
+            response:{},
             errors:[]
         };
     },
@@ -499,7 +499,7 @@ const profile = Vue.component('profile',{
             posts: [],
             followers:0,
             current_user:localStorage.getItem('current_user'),
-            response:"",
+            response:{},
             errors:[]
         };
     },
@@ -545,9 +545,9 @@ const profile = Vue.component('profile',{
                         $('#follow').css('background-color','green');
                         $('#follow').text('Following');
                         //console.log(jsonResonse)
-                    })
+                    });
                 }
-            })
+            });
         }
     },
     created:
@@ -668,11 +668,11 @@ const explore = Vue.component('explore',{
     `,
     data:function (){
         return {
-            response:[],
+            response:{},
             posts:[],
             errors:[],
             liked_posts:[]
-        }
+        };
     },
     created:
         function(){

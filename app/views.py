@@ -88,7 +88,8 @@ def login():
 def logout(current_user):
     """Logs out a currently logged in user"""
     if request.method == 'GET':
-        return jsonify({'message': 'User successfully logged out'})
+        response = {'message': 'User successfully logged out'}
+        return jsonify(response)
     return jsonify_errors(['Only GET requests are accepted'])
 
 
