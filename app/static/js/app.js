@@ -242,6 +242,7 @@ const uploadForm = Vue.component('uploadForm',{
                 <div id="space" class="form-group">
                     <button type="submit" name="submit" class="btn btn-primary btn-block">Upload</button>
                 </div>
+                <br>
                 </form>
             </div>
         </div>
